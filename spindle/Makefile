@@ -59,3 +59,6 @@ prgloader.h:		prgloader.prg
 
 winspin.exe:		spin.c pack.c disk.c compat/err.c
 			i586-mingw32msvc-gcc -Wl,--stack,5000000 -Wall -O3 -idirafter compat -o $@ $^
+
+clean:
+			rm *.o *.prg
