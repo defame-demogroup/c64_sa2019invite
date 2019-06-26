@@ -16,11 +16,22 @@ $4338 - $471F	Color RAM
 */
 
 
+/*
+MEMORY MAP:
+$0400 - $0800 color map (char)
+$0800 - $1800 Sprite Font
+$2000 - $4000 Bitmap
+
+
+*/
+
+
 //Values
 .label logomask1 = %00011000
 .label rasterLine = $08
 .label totalSpriteCount = 8 + 7
 .label spriteShiftOffsets = $100/totalSpriteCount
+.label spriteFontAddress = $0840
 
 //Zeropage
 .label zp_base = $80
@@ -49,7 +60,7 @@ $4338 - $471F	Color RAM
 .pc = $0801 "Basic Upstart"
 :BasicUpstart(start) // 10 sys$0810
 */
-.pc =$5000 "Program"
+.pc =$4000 "Program"
 start:
 	:mov #$00: $d020
 	:mov #$0c: $d021
@@ -169,6 +180,10 @@ funcInitData:
     lda #>SCROLLTEXT
     sta >mem_spriteScolltextOffsetPtr
 
+    lda #$1d
+    sta $d018
+
+
     ldx #$00
     ldy #$00
     lda #music.startSong-1
@@ -237,7 +252,7 @@ funcRenderSpriteScroller:
     sbc #$20 = the start of our font is at space char
     adc #$c0 = sprite pointers are at $3000
     */
-    adc #($c0-$20) //we just do it in one step instead as $a0
+    adc #((spriteFontAddress / $40) - $20)
     sta SPRITE_POINTERS
     lda zp_spriteScrollCurrentColor
     sta SPRITE_COLORS
@@ -376,7 +391,7 @@ SPRITE_SCROLL_X_HI:
 .align $100
 .pc = * "SPRITE POINTERS"
 SPRITE_POINTERS:
-.fill $20, $c0 //fill sprites with spaces
+.fill $20, spriteFontAddress //fill sprites with spaces
 
 SPRITE_COLORS:
 .fill $20, $01
@@ -391,8 +406,8 @@ SPRITE_FLASH_COLORS:
 
 
 //SCROLLER!!!
-.pc = $8000 "scrolltext"
 .align $100
+.pc = * "scrolltext"
 SCROLLTEXT:
 .text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 .byte $00
@@ -513,7 +528,7 @@ frameCount = total number of frames to render
 frameSize = number of raster lines in each frame
 maxSplitSize = total raster lines to use in FLD total 
 */
-_spriteFontReader("rsrc/spritefont.gif",$3000,60)
+_spriteFontReader("rsrc/spritefont.gif",$0800,60)
 
 /********************************************
 MACROS
@@ -562,4 +577,14 @@ MACROS
 }
 
 
+
+/*
+Advanced Art Studio
+load address: $2000 - $471F
+$2000 - $3F3F	Bitmap
+$3F40 - $4327	Screen RAM
+$4328	Border
+$4329	Background
+$4338 - $471F	Color RAM
+*/
 

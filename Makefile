@@ -8,15 +8,13 @@ invite.prg:	invite.asm
 spindle:	
 		cd spindle && make
 
-
 disk.d64:	script invite.prg
-		echo `pwd`
-		${SPIN} -vv -o $@ -a dirart.txt -d 2 -e 5000 $<
+		${SPIN} -vv -o $@ -a dirart.txt -d 0 -t "SIGGRAPH 2019" -e 4000 $<
 
 clean:
 		rm *.sym *.prg *.d64
 
-run:		invite.prg
+run:	invite.prg
 		x64 $< >/dev/null
 
 		
