@@ -9,7 +9,7 @@ spindle:
 		cd spindle && make
 
 disk.d64:	script invite.prg
-		${SPIN} -vv -o $@ -a dirart.txt -d 0 -t "SIGGRAPH 2019" -e 4000 $<
+		${SPIN} -vv -o $@ -a dirart.txt -d 0 -t "SIGGRAPH 2019" -e 1000 $<
 
 clean:
 		rm *.sym *.prg *.d64

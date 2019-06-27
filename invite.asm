@@ -18,11 +18,15 @@ $4338 - $471F	Color RAM
 
 /*
 MEMORY MAP:
-$0400 - $0800 color map (char)
-$0800 - $1800 Sprite Font
-$2000 - $4000 Bitmap
-
-
+$0400 - $0800 ???
+$0800 - $1000 SPINDLE
+$1000 - $4000 Code and Data 
+$4000 - $4800 SCREEN RAM
+$4800 - $5800 Sprite Font
+$5800 - $6000 More Code or Data
+$6000 - $8000 BITMAP
+$8000 - $A800 BUFFER
+$A800 - $CFFF Code and Data and MUSIC
 */
 
 
@@ -31,7 +35,8 @@ $2000 - $4000 Bitmap
 .label rasterLine = $08
 .label totalSpriteCount = 8 + 7
 .label spriteShiftOffsets = $100/totalSpriteCount
-.label spriteFontAddress = $0840
+.label spriteFontAddress = $4800
+.label spriteFontPointerBase = (spriteFontAddress - $4000)/$40
 
 //Zeropage
 .label zp_base = $80
@@ -60,7 +65,7 @@ $2000 - $4000 Bitmap
 .pc = $0801 "Basic Upstart"
 :BasicUpstart(start) // 10 sys$0810
 */
-.pc =$4000 "Program"
+.pc =$1000 "Program"
 start:
 	:mov #$00: $d020
 	:mov #$0c: $d021
@@ -102,7 +107,7 @@ lda #$00
 sta $d020
 
     //pop bottom border
-    lda #$1b
+    lda #%00111011
     sta $d011
 
 !loop:
@@ -110,7 +115,7 @@ sta $d020
     cmp #$f8
     bne !loop-
 
-    lda #$13
+    lda #%00110011 //$13
     sta $d011
 
 lda #$09
@@ -180,8 +185,14 @@ funcInitData:
     lda #>SCROLLTEXT
     sta >mem_spriteScolltextOffsetPtr
 
-    lda #$1d
+
+    //set the bank to #2 with SPINDLE resident
+    lda #$3d
+    sta $dd02 
+
+    lda #%00001000 //set screen mem to $0000 and bitmap to $2000 (+ bank)
     sta $d018
+
 
 
     ldx #$00
@@ -252,7 +263,7 @@ funcRenderSpriteScroller:
     sbc #$20 = the start of our font is at space char
     adc #$c0 = sprite pointers are at $3000
     */
-    adc #((spriteFontAddress / $40) - $20)
+    adc #(spriteFontPointerBase - $20)
     sta SPRITE_POINTERS
     lda zp_spriteScrollCurrentColor
     sta SPRITE_COLORS
@@ -327,7 +338,7 @@ funcDisplaySpriteSplitA:
         lda SPRITE_SCROLL_Y + off,x
         sta REG_SPRITE_Y_0 + (i*2)
         lda SPRITE_POINTERS + i + baseline
-        sta REG_SPRITE_DATA_PTR_0 + i
+        sta REG_SPRITE_DATA_PTR_0 + $4000 - $0400 + i
         lda SPRITE_COLORS + i + baseline
         and #%00001111
         sta REG_SPRITE_COLOUR_0 + i
@@ -352,7 +363,7 @@ funcDisplaySpriteSplitB:
         lda SPRITE_SCROLL_Y + off,x
         sta REG_SPRITE_Y_0 + (i*2)
         lda SPRITE_POINTERS + i + baseline
-        sta REG_SPRITE_DATA_PTR_0 + i
+        sta REG_SPRITE_DATA_PTR_0 + $4000 - $0400 + i
         lda SPRITE_COLORS + i + baseline
         and #%00001111
         sta REG_SPRITE_COLOUR_0 + i
@@ -371,8 +382,8 @@ DATASETS
 SPRITE_SCROLL_Y:
 .fill $10,$10
 .fill $70,easeIn(i,$10,$80,$70)
-.fill $70,easeOut(i,$90,$8f,$70)
-.fill $10,$1f
+.fill $70,easeOut(i,$90,$80,$70)
+.fill $10,$10
 
 
 
@@ -391,7 +402,7 @@ SPRITE_SCROLL_X_HI:
 .align $100
 .pc = * "SPRITE POINTERS"
 SPRITE_POINTERS:
-.fill $20, spriteFontAddress //fill sprites with spaces
+.fill $20, spriteFontPointerBase //fill sprites with spaces
 
 SPRITE_COLORS:
 .fill $20, $01
@@ -528,7 +539,7 @@ frameCount = total number of frames to render
 frameSize = number of raster lines in each frame
 maxSplitSize = total raster lines to use in FLD total 
 */
-_spriteFontReader("rsrc/spritefont.gif",$0800,60)
+_spriteFontReader("rsrc/spritefont.gif",spriteFontAddress,60)
 
 /********************************************
 MACROS
