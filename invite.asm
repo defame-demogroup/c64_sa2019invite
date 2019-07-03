@@ -16,8 +16,8 @@ $4800 - $5800 Sprite Font
 $5800 - $6000 *RESERVED FOR VIC DATA* just in case...
 $6000 - $8000 BITMAP
 $8000 - $A800 BUFFER
-$A800 - $AA00 State Machine Effect Buffer
-$AA00 - $B000 scroll text (should be enough scroll text!)
+$A800 - $AB00 State Machine Effect Buffer
+$AB00 - $B000 scroll text (should be enough scroll text!)
 $B000 - $CFFF Code and Data and MUSIC
 */
 
@@ -60,8 +60,9 @@ start:
     sta $01
     cli
 	:setupInterrupt(irq, rasterLine) // last six chars (with a few raster lines to stabalize raster)
-!loop:
-    jmp !loop-
+//!loop:
+    _insertStateMachinesWork($0c90)  
+//    jmp !loop-
 
 /********************************************
 MAIN INTERRUPT LOOP
@@ -133,6 +134,11 @@ inc $d020
 dec $d020
 lda #$00
 sta REG_SPRITE_ENABLE
+
+inc $d020
+_insertStateMachinesIRQ()
+dec $d020
+
 
 //----------------------------------------------
 
@@ -354,9 +360,6 @@ funcDisplaySpriteSplitB:
     rts
 
 
-funcDrawBitmap:
-//todo: insert bmstatemachine and insert the calls for each sm per line
-
 
 /********************************************
 DATASETS
@@ -402,12 +405,12 @@ SPRITE_FLASH_COLORS:
 .byte $40, $4b, $49, $42, $47, $41, $47, $42, $49, $4b, $46, $4e, $41, $4e, $46, $40
 
 .import source "rsrc/colorquads.asm"
-
+.import source "rsrc/bmstatemachine.asm"
 
 
 //SCROLLER!!!
 .align $100
-.pc = $aa00 "scrolltext"
+.pc = $ab00 "scrolltext"
 SCROLLTEXT:
 .text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 .byte $00

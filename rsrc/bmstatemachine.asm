@@ -1,5 +1,3 @@
-TODO: 
-fix the effect files to have 6 lines instead of 3!
 
 /*
 Virtual Bitmap Addresses:
@@ -32,40 +30,62 @@ $4338 - $471F   Color RAM
 .function setupBitmapOffsets(){
     .var bitmap_offsets = List()
     .for(var i=0;i<screen_width;i++){
-        bitmap_offsets.add(i * 8)
+        .eval bitmap_offsets.add(i * 8)
     }
     .return bitmap_offsets
 }
 
 
-//call this in an IRQ and then the SM's!!!!
-.macro _initStateMachineRun(){
+//use this to inder INSIDE IRQ
+.macro _insertStateMachinesIRQ(){
+    lda SM_DISABLE
+    beq !+
+    //disabled, just return
+    rts
+!:
     lda #$01
     sta SM_COMPLETED
-    //todo: add am I allowed to run flag here
-    //switch off when loading...
+    .for(var i=0;i<screen_height;i++){
+        .for(var j=0;j<sm_count;j++){
+            _doStateMachine(i,j)
+        }
+    }
+    lda SM_COMPLETED
+    beq !+
+    lda #$01
+    sta SM_DISABLE
+!:  
+    rts
 }
 
-//init outside of raster before starting the sm in raster
-.macro _initStateMachine(){
+//use this to insert OUTSIDE IRQ
+.macro _insertStateMachinesWork(irqLoaderCall){
+start:
+    lda SM_DISABLE
+    beq start
+    //clear the finished state of all chars on screen
     lda #$00
-    //fastest loop with a comparison
-    ldx #40
-!:
+    //fastest loop with a comparison (-1 approach)
+    ldx #screen_width
+loop:
+
     .for(var i=0;i<screen_height;i++){
         sta SM_FINISHED + (screen_width * i) - 1,x
     }
+
     dex
-    bne !-
+    bne loop
+    jsr irqLoaderCall
+    lda #$00
+    sta SM_DISABLE
+    jmp start
 }
-
-//load effect data
-
 
 /*
 macro to insert a state machine
+don't call this!
 */
-.macro _transitionStateMachine(row,smIndex){
+.macro _doStateMachine(row,smIndex){
     ldx delay: #$01
     dex
     beq !+ //no more delay, skip
@@ -88,10 +108,10 @@ macro to insert a state machine
     lda SM_FINISHED,x
     beq !+ //not done, skip
 
-    //I need to set myself as finished.
-reset_state_machine:
+    //reset the state machine for next use
     lda #$00
     sta state
+    //I need to set myself as finished.
     lda #sm_done_flag
     sta SM_OFFSETS + (screen_height * smIndex) + row
     rts
@@ -135,19 +155,19 @@ init:
     sta delay
 
 o75:
-    lda r_colorram (row * 40),x
+    lda r_colorram + (row * screen_width),x
     sta originalColorRam50
     sta originalColorRam25
     tay
     lda COLOR_HIGH,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
 
-    lda r_screen + (row * 40),x
+    lda r_screen + (row * screen_width),x
     sta originalScreen50
     sta originalScreen25
     tay
     lda COLOR_HIGH,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
     
     inc state
     rts
@@ -155,12 +175,12 @@ o50:
     lda originalColorRam50: #$00 
     tay
     lda COLOR_MID,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
     
     lda originalScreen50: #$00
     tay
     lda COLOR_MID,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
     
     inc state
     rts
@@ -168,19 +188,19 @@ o25:
     lda originalColorRam25: #$00 
     tay
     lda COLOR_LOW,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
     
     lda originalScreen25: #$00
     tay
     lda COLOR_LOW,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
 
     inc state
     rts
 swap:
     lda #$00
-    sta r_colorram + (row * 40),x
-    sta r_screen + (row * 40),x
+    sta r_colorram + (row * screen_width),x
+    sta r_screen + (row * screen_width),x
 
     //set up base addresses for bitmap copy
     clc
@@ -211,50 +231,50 @@ swap:
     inc state
     rts
 n25:
-    lda v_colorram (row * 40),x
+    lda v_colorram + (row * screen_width),x
     tay
     lda COLOR_LOW,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
 
-    lda v_screen + (row * 40),x
+    lda v_screen + (row * screen_width),x
     tay
     lda COLOR_LOW,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
 
     inc state
     rts
 n50:
-    lda v_colorram (row * 40),x
+    lda v_colorram + (row * screen_width),x
     tay
     lda COLOR_MID,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
 
-    lda v_screen + (row * 40),x
+    lda v_screen + (row * screen_width),x
     tay
     lda COLOR_MID,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
 
     inc state
     rts
 n75:
-    lda v_colorram (row * 40),x
+    lda v_colorram + (row * screen_width),x
     tay
     lda COLOR_HIGH,y
-    sta r_colorram + (row * 40),x
+    sta r_colorram + (row * screen_width),x
 
-    lda v_screen + (row * 40),x
+    lda v_screen + (row * screen_width),x
     tay
     lda COLOR_HIGH,y
-    sta r_screen + (row * 40),x
+    sta r_screen + (row * screen_width),x
 
     inc state
     rts
 n100:
-    lda v_colorram (row * 40),x
-    sta r_colorram + (row * 40),x
+    lda v_colorram + (row * screen_width),x
+    sta r_colorram + (row * screen_width),x
 
-    lda v_screen + (row * 40),x
-    sta r_screen + (row * 40),x
+    lda v_screen + (row * screen_width),x
+    sta r_screen + (row * screen_width),x
 
     //now set up machine for next move
     lda  SM_DELTAS + (screen_height * smIndex) + row
@@ -275,7 +295,7 @@ backwards:
     sta SM_OFFSETS + (screen_height * smIndex) + row
 
 finished:
-    lda #$01 //never use zero as that is for init only
+    lda #$01 //never use zero as that is for first frame init only
     sta state
     
     lda #$00
@@ -297,8 +317,12 @@ SM_FINISHED: //mark completed states
     }
 }
 
+
+SM_DISABLE:
+    .byte $00
+
 SM_COMPLETED: //endstate when stat machine is done
-.byte $00
+    .byte $00
 //set to $01 initially and SM only set to zero if not done
 
 .var bitmap_offsets = setupBitmapOffsets()
@@ -323,11 +347,13 @@ SM_OFFSETS: //x offset of each statemachine (sets initial start location and the
     .byte $00
 }
 
+.align $100
 SM_DELTAS: //distance deltas of each state machine - high bit is subtraction
 .for(var i=0;i<(screen_height * sm_count);i++){
     .byte $00
 }
 
+.align $100
 SM_DELAYS: //initial frame delays for each state machine
 .for(var i=0;i<(screen_height * sm_count);i++){
     .byte $00
