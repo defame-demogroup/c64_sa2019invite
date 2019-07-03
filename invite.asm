@@ -13,10 +13,11 @@ $0800 - $1000 SPINDLE
 $1000 - $4000 Code and Data 
 $4000 - $4800 SCREEN RAM
 $4800 - $5800 Sprite Font
-$5800 - $6000 More Code or Data
+$5800 - $6000 *RESERVED FOR VIC DATA* just in case...
 $6000 - $8000 BITMAP
 $8000 - $A800 BUFFER
-$A800 - $B000 scroll text
+$A800 - $AA00 State Machine Effect Buffer
+$AA00 - $B000 scroll text (should be enough scroll text!)
 $B000 - $CFFF Code and Data and MUSIC
 */
 
@@ -406,7 +407,7 @@ SPRITE_FLASH_COLORS:
 
 //SCROLLER!!!
 .align $100
-.pc = $a800 "scrolltext"
+.pc = $aa00 "scrolltext"
 SCROLLTEXT:
 .text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 .byte $00

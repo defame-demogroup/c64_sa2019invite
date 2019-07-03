@@ -1,3 +1,6 @@
+TODO: 
+fix the effect files to have 6 lines instead of 3!
+
 /*
 Virtual Bitmap Addresses:
 Advanced Art Studio
@@ -14,7 +17,7 @@ $4338 - $471F   Color RAM
 .label v_background = v_bitmap + $2329
 .label v_colorram = v_bitmap + $2338 
 
-.label sm_count = 3 //state machine count per line
+.label sm_count = 6 //state machine count per line - this affects the design of effect files!!!!
 .label sm_delay = 2 //interframe delay for updates
 .label sm_done_flag = $ff
 
@@ -35,10 +38,16 @@ $4338 - $471F   Color RAM
 }
 
 
-//dont call this in an IRQ!!!!
+//call this in an IRQ and then the SM's!!!!
 .macro _initStateMachineRun(){
     lda #$01
     sta SM_COMPLETED
+    //todo: add am I allowed to run flag here
+    //switch off when loading...
+}
+
+//init outside of raster before starting the sm in raster
+.macro _initStateMachine(){
     lda #$00
     //fastest loop with a comparison
     ldx #40
@@ -59,7 +68,7 @@ macro to insert a state machine
 .macro _transitionStateMachine(row,smIndex){
     ldx delay: #$01
     dex
-    beq !+
+    beq !+ //no more delay, skip
     stx delay
     rts
 !:
@@ -71,9 +80,27 @@ macro to insert a state machine
     ldx SM_OFFSETS + (screen_height * smIndex) + row
     //check if this state machine is finished
     cpx #sm_done_flag
-    bne !+
+    bne !+ //not done - skip
     rts //state machine is done and waiting for others to finish
 !:
+
+    //Am I done?
+    lda SM_FINISHED,x
+    beq !+ //not done, skip
+
+    //I need to set myself as finished.
+reset_state_machine:
+    lda #$00
+    sta state
+    lda #sm_done_flag
+    sta SM_OFFSETS + (screen_height * smIndex) + row
+    rts
+
+!:
+    //tell all other SM's that this block is taken!
+    lda #$01
+    sta SM_FINISHED,x
+
     //this is trying to be a switch statement 
     //by using the state, multiply by 4 and use
     //use that as the offset into a jump table 
@@ -255,11 +282,6 @@ finished:
     sta SM_COMPLETED //negate a complete flag
     rts
 
-state_machine_completed:
-    //reset state machine
-    lda #$00
-    sta state
-    rts
 }
 
 //how to trigger the state machines in a cascade so you get fades etc?
@@ -268,8 +290,34 @@ state_machine_completed:
 /********************************************
 DATASETS
 *********************************************/
+SM_FINISHED: //mark completed states
+.for(var i=0;i<(screen_height);i++){
+    .for(var j=0;j<screen_width;j++){
+        .byte $00
+    }
+}
+
+SM_COMPLETED: //endstate when stat machine is done
+.byte $00
+//set to $01 initially and SM only set to zero if not done
+
+.var bitmap_offsets = setupBitmapOffsets()
+
+SM_BITMAP_OFFSETS_LO:
+.for(var i=0; i<screen_width;i++){
+    .byte <bitmap_offsets.get(i)
+}
+
+SM_BITMAP_OFFSETS_HI:
+.for(var i=0; i<screen_width;i++){
+    .byte >bitmap_offsets.get(i)
+}
+
+/*
+this gets replaced by loaded datasets!
+*/
 .align $100
-.pc = * "state machine number"
+.pc = $a800 "state machine buffer"
 SM_OFFSETS: //x offset of each statemachine (sets initial start location and then updated per frame)
 .for(var i=0;i<(screen_height * sm_count);i++){
     .byte $00
@@ -285,31 +333,8 @@ SM_DELAYS: //initial frame delays for each state machine
     .byte $00
 }
 
-SM_FINISHED: //mark completed states
-.for(var i=0;i<(screen_height);i++){
-    .for(var j=0;j<screen_width;j++){
-        .byte $00
-    }
-}
 
-SM_COMPLETED: //endstate when stat machine is done
-.byte $00
-//set to $01 initially and SM only set to zero if not done
-
-
-
-.var bitmap_offsets = setupBitmapOffsets()
-
-SM_BITMAP_OFFSETS_LO:
-.for(var i=0; i<screen_width;i++){
-    .byte <bitmap_offsets.get(i)
-}
-
-SM_BITMAP_OFFSETS_HI:
-.for(var i=0; i<screen_width;i++){
-    .byte >bitmap_offsets.get(i)
-}
-
+/*
 EFFECT_1:
 SM_OFFSETS: //x offset of each statemachine (sets initial start location and then updated per frame)
 .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -325,4 +350,4 @@ SM_DELAYS: //initial frame delays for each state machine
 .byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
 .byte $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02
 .byte $03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-
+*/
