@@ -9,22 +9,6 @@ $4328           Border
 $4329           Background
 $4338 - $471F   Color RAM
 */
-.label v_bitmap = $8000
-.label v_screen = v_bitmap + $1f40
-.label v_border = v_bitmap + $2328
-.label v_background = v_bitmap + $2329
-.label v_colorram = v_bitmap + $2338 
-
-.label sm_count = 6 //state machine count per line - this affects the design of effect files!!!!
-.label sm_delay = 2 //interframe delay for updates
-.label sm_done_flag = $ff
-
-.label r_screen = $4000
-.label r_colorram = $d800
-.label r_bitmap = $6000
-
-.label screen_width = 40
-.label screen_height = 25
 
 
 .function setupBitmapOffsets(){
@@ -60,25 +44,6 @@ $4338 - $471F   Color RAM
 
 //use this to insert OUTSIDE IRQ
 .macro _insertStateMachinesWork(irqLoaderCall){
-start:
-    lda SM_DISABLE
-    beq start
-    //clear the finished state of all chars on screen
-    lda #$00
-    //fastest loop with a comparison (-1 approach)
-    ldx #screen_width
-loop:
-
-    .for(var i=0;i<screen_height;i++){
-        sta SM_FINISHED + (screen_width * i) - 1,x
-    }
-
-    dex
-    bne loop
-    jsr irqLoaderCall
-    lda #$00
-    sta SM_DISABLE
-    jmp start
 }
 
 /*
@@ -306,58 +271,6 @@ finished:
 
 //how to trigger the state machines in a cascade so you get fades etc?
 
-
-/********************************************
-DATASETS
-*********************************************/
-SM_FINISHED: //mark completed states
-.for(var i=0;i<(screen_height);i++){
-    .for(var j=0;j<screen_width;j++){
-        .byte $00
-    }
-}
-
-
-SM_DISABLE:
-    .byte $00
-
-SM_COMPLETED: //endstate when stat machine is done
-    .byte $00
-//set to $01 initially and SM only set to zero if not done
-
-.var bitmap_offsets = setupBitmapOffsets()
-
-SM_BITMAP_OFFSETS_LO:
-.for(var i=0; i<screen_width;i++){
-    .byte <bitmap_offsets.get(i)
-}
-
-SM_BITMAP_OFFSETS_HI:
-.for(var i=0; i<screen_width;i++){
-    .byte >bitmap_offsets.get(i)
-}
-
-/*
-this gets replaced by loaded datasets!
-*/
-.align $100
-.pc = $a800 "state machine buffer"
-SM_OFFSETS: //x offset of each statemachine (sets initial start location and then updated per frame)
-.for(var i=0;i<(screen_height * sm_count);i++){
-    .byte $00
-}
-
-.align $100
-SM_DELTAS: //distance deltas of each state machine - high bit is subtraction
-.for(var i=0;i<(screen_height * sm_count);i++){
-    .byte $00
-}
-
-.align $100
-SM_DELAYS: //initial frame delays for each state machine
-.for(var i=0;i<(screen_height * sm_count);i++){
-    .byte $00
-}
 
 
 /*

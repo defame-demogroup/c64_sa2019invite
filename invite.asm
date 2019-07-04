@@ -1,6 +1,12 @@
 .import source "libs/lib.asm"
 .import source "libs/easingLib.asm"
 .import source "libs/const.asm"
+.import source "rsrc/defines.asm"
+.import source "rsrc/bmstatemachine.asm"
+.import source "rsrc/smdata.asm"
+.import source "rsrc/scrolltext.asm"
+.import source "rsrc/colorquads.asm"
+.import source "rsrc/spritedata.asm"
 
 .var music = LoadSid("rsrc/Very_Bland.sid")
 
@@ -11,7 +17,7 @@ MEMORY MAP:
 $0400 - $0800 ???
 $0800 - $1000 SPINDLE
 $1000 - $4000 Code and Data 
-$4000 - $4800 SCREEN RAM
+$4000 - $4400 SCREEN RAM
 $4800 - $5800 Sprite Font
 $5800 - $6000 *RESERVED FOR VIC DATA* just in case...
 $6000 - $8000 BITMAP
@@ -22,25 +28,6 @@ $B000 - $CFFF Code and Data and MUSIC
 */
 
 
-//Values
-.label logomask1 = %00011000
-.label rasterLine = $08
-.label totalSpriteCount = 8 + 7
-.label spriteShiftOffsets = $100/totalSpriteCount
-.label spriteFontAddress = $4800
-.label spriteFontPointerBase = (spriteFontAddress - $4000)/$40
-
-//Zeropage
-.label zp_base = $80
-.label zp_spriteScrollCurrentColor = zp_base
-.label zp_spriteScrollCurrentSpeed = zp_base + 1
-.label zp_spriteScrollDelayTimer = zp_base + 2
-.label zp_spriteScrollColorFlasherCounter = zp_base + 3
-.label zp_spriteScrollOffsetPtr = zp_base + 4
-.label zp_bitmask_controlchar = zp_base + 5
-.label zp_bitmask_color = zp_base + 6
-.label zp_bitmask_speed = zp_base + 7
-
 
 //addresses
 
@@ -48,7 +35,7 @@ $B000 - $CFFF Code and Data and MUSIC
 .pc = $0801 "Basic Upstart"
 :BasicUpstart(start) // 10 sys$0810
 */
-.pc =$1000 "Program"
+.pc = $1000 "Program"
 start:
 	:mov #$00: $d020
 	:mov #$0c: $d021
@@ -61,7 +48,23 @@ start:
     cli
 	:setupInterrupt(irq, rasterLine) // last six chars (with a few raster lines to stabalize raster)
 //!loop:
-    _insertStateMachinesWork($0c90)  
+loop:
+    lda SM_DISABLE
+    beq start
+    //clear the finished state of all chars on screen
+    lda #$00
+    //fastest loop with a comparison (-1 approach)
+    ldx #screen_width
+!:
+    .for(var i=0;i<screen_height;i++){
+        sta SM_FINISHED + (screen_width * i) - 1,x
+    }
+    dex
+    bne !-
+    jsr $0c90
+    lda #$00
+    sta SM_DISABLE
+    jmp loop
 //    jmp !loop-
 
 /********************************************
@@ -365,140 +368,36 @@ funcDisplaySpriteSplitB:
 DATASETS
 *********************************************/
 
-//used for plotting the logo
-.align $100
-.pc = * "SPRITE SCROLLER DATASETS"
-SPRITE_SCROLL_Y:
-.fill $10,$10
-.fill $70,easeIn(i,$10,$80,$70)
-.fill $70,easeOut(i,$90,$80,$70)
-.fill $10,$10
 
 
-
-.align $100
-SPRITE_SCROLL_X_LO:
-.for(var i=$100;i>0;i--){
-    .byte <(i/$100*346)
+/********************************************
+DATASETS
+*********************************************/
+SM_FINISHED: //mark completed states
+.for(var i=0;i<(screen_height);i++){
+    .for(var j=0;j<screen_width;j++){
+        .byte $00
+    }
 }
 
-.align $100
-SPRITE_SCROLL_X_HI:
-.for(var i=$100;i>0;i--){
-    .byte >(i/$100*346)
+SM_DISABLE:
+    .byte $00
+
+SM_COMPLETED: //endstate when stat machine is done
+    .byte $00
+//set to $01 initially and SM only set to zero if not done
+
+.var bitmap_offsets = setupBitmapOffsets()
+
+SM_BITMAP_OFFSETS_LO:
+.for(var i=0; i<screen_width;i++){
+    .byte <bitmap_offsets.get(i)
 }
 
-.align $100
-.pc = * "SPRITE POINTERS"
-SPRITE_POINTERS:
-.fill $20, spriteFontPointerBase //fill sprites with spaces
-
-SPRITE_COLORS:
-.fill $20, $01
-
-.align $100
-SPRITE_FLASH_COLORS:
-.byte $00, $06, $0e, $0f, $03, $01, $01, $01, $03, $0f, $0e, $06, $00, $00, $00, $00 //first line never gets used
-.byte $10, $16, $1e, $1f, $13, $11, $11, $11, $13, $1f, $1e, $16, $10, $10, $10, $10
-.byte $20, $2b, $2c, $2f, $21, $2f, $2c, $2b, $20, $2b, $2c, $2f, $21, $2f, $2c, $2b
-.byte $3b, $34, $3b, $34, $36, $34, $36, $34, $3b, $34, $3b, $34, $36, $34, $36, $34
-.byte $40, $4b, $49, $42, $47, $41, $47, $42, $49, $4b, $46, $4e, $41, $4e, $46, $40
-
-.import source "rsrc/colorquads.asm"
-.import source "rsrc/bmstatemachine.asm"
-
-
-//SCROLLER!!!
-.align $100
-.pc = $ab00 "scrolltext"
-SCROLLTEXT:
-.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
-.byte $00
-scrollColor($01)
-.text " HELLO "
-scrollSpeed($02)
-.text "  PARTY PEOPLE "
-scrollColor($04)
-.text "WE NEED SOME         "
-scrollColor($21)
-.text "     RASTER BARS!"
-scrollSpeed($00)
-.text "  "
-scrollSpeed($02)
-.text "  "
-scrollSpeed($03)
-.text "  "
-scrollColor($04)
-.text "  WE "
-scrollColor($21)
-.text " LOVE " 
-scrollColor($04)
-.text " OLD SKOOL EFFECTS... "
-scrollSpeed($02)
-.text " ...AND THAT IS WHAT I HAVE FOR YOU TODAY LADIES AND GENTLEMEN..."
-scrollColor($02)
-.text "  "
-scrollSpeed($03)
-.text " COME AND GATHER ROUND BOYS AND GIRLS WHILE I TELL YOU ABOUT PARTYSCROLLERS FROM THE OLD DAYS."
-scrollColor($31)
-.text "  "
-scrollSpeed($02)
-.text "...AND NOW FOR SOME MESSAGES FROM PARTYPEOPLE AT SYNTAX..."
-scrollSpeed($01)
-.text " ARE YOU READY? "
-scrollColor($05)
-.text "  "
-scrollSpeed($02)
-.text "EVILEYE I AM ON THE BIG SCREEN!! LUL"
-scrollColor($07)
-.text "  "
-scrollSpeed($03)
-.text "AZRYL SEZ LIFE SUX WHEN YOUR GIRLFRIEND DOESNT :)"
-scrollColor($0a)
-.text "  "
-scrollSpeed($02)
-.text "STYLE/CHROME HERE."
-scrollSpeed($03)
-.text " I DONT KNOW WHAT THIS DEMO IS, BUT IT MUST RULE BECAUSE SCROLLTEXTS. UPVOTE FOR SURE."
-scrollColor($01)
-.text "  (CENSORED)  "
-scrollColor($0a)
-.text "  PEACE OUT!"
-scrollColor($0d)
-.text "  "
-scrollSpeed($03)
-.text "VOLTAGE ON THE KEYS AT "
-scrollColor($11)
-.text "  SYNTAX 2018  "
- scrollColor($0d)
-.text "  !!!!!!!  OHHHH YEAH...  SHOUTOUTS TO ALL THE RAD SCENERS OUT THERE.  BLERG.. I'M ALREADY HUNGOVER, BUT BACK ON THE BAD BOYS AGAIN. I'LL GROW UP LATER, MAYBE.  STAY FROSTY.  VOLT OUT."
-scrollColor($21)
-.text "  "
-scrollSpeed($02)
-.text "  RELOAD HERE, WE ARE BACK! DEMO OR DIE!  "
-scrollColor($01)
-.text "  "
-scrollSpeed($03)
-.text "  MIKNIK DOWN HERE IN VIC AGAIN, CHEERS EVERYONE!  "
-scrollColor($0e)
-.text "  "
-scrollSpeed($02)
-.text "  JAZZCAT HERE ON THE KEYS... "
-scrollSpeed($03)
-.text "SO, HERE WE ARE AT FUCKING SYNTAX MAN... OOOH YEAHHHH.. NOTHING BEATS A SWEET SCROLLER, THIS IS WHERE IT IS AT, THIS IS WHERE IT ALL BEGAN. ANYWAY, HANDING OVER TO SOMEONE ELSE SO I CAN DOWN SOME MORE BEERZ... SEE YOU NEXT TIME!  "
-scrollColor($11)
-.text "  "
-scrollSpeed($02)
-.text "  ZIG HERE... ITS BEEN DECADES SINCE I DID ANY SERIOUS C64 CODE.  CREDITS GO TO 4-MATT FOR THE GREAT TUNE."
-scrollColor($01)
-.text "  "
-scrollSpeed($03)
-.text "  I JUST LOVE THIS MACHINE AND THE DEMOSCENE CULTURE AROUND IT. AS CRAZY AS THIS WORLD BECOMES, 8 BITS MAKES IT FUN...  "
-scrollColor($41)
-.text "  "
-scrollSpeed($01)
-.text "  ...GREETINGS TO EVERYONE IN DEFAME, THE SYNTAX CREW, AND ALL YOU GREAT SYNTAX PARTY PEOPLE.  "
-.byte $00
+SM_BITMAP_OFFSETS_HI:
+.for(var i=0; i<screen_width;i++){
+    .byte >bitmap_offsets.get(i)
+}
 
 /*
 These macros work with the scroller
