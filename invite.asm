@@ -46,34 +46,19 @@ start:
     lda #$36
     sta $01
     cli
-	:setupInterrupt(irq, rasterLine) // last six chars (with a few raster lines to stabalize raster)
+	:setupInterrupt(irq1, rasterLine) // last six chars (with a few raster lines to stabalize raster)
 //!loop:
-loop:
-    lda SM_DISABLE
-    beq start
-    //clear the finished state of all chars on screen
-    lda #$00
-    //fastest loop with a comparison (-1 approach)
-    ldx #screen_width
-!:
-    .for(var i=0;i<screen_height;i++){
-        sta SM_FINISHED + (screen_width * i) - 1,x
-    }
-    dex
-    bne !-
-    jsr $0c90
-    lda #$00
-    sta SM_DISABLE
-    jmp loop
+    _insertStateMachinesWork($0c90)
+
 //    jmp !loop-
 
 /********************************************
 MAIN INTERRUPT LOOP
 *********************************************/
 
-irq:
+irq1:
 	:startInterrupt()
-	:doubleIRQ(rasterLine)
+//	:doubleIRQ(rasterLine)
 
 lda #$06
 sta $d020
@@ -83,25 +68,32 @@ sta $d020
     lda #$ff
     sta REG_SPRITE_ENABLE
 
-!loop:
-    lda $d012
-    cmp #$8f
-    bne !loop-
+	:mov #<irq2: $fffe
+    :mov #>irq2: $ffff
+	:mov #rasterLine2:$d012
+	:mov #$ff: $d019
+	:endInterrupt()
+
+irq2:
+	:startInterrupt()
 lda #$04
 sta $d020
     jsr funcDisplaySpriteSplitB
 lda #$00
 sta $d020
-
     //pop bottom border
     lda #%00111011
     sta $d011
 
-!loop:
-    lda $d012
-    cmp #$f8
-    bne !loop-
+	:mov #<irq3: $fffe
+    :mov #>irq3: $ffff
+	:mov #rasterLine3:$d012
+	:mov #$ff: $d019
+	:endInterrupt()
 
+
+irq3:
+	:startInterrupt()
     lda #%00110011 //$13
     sta $d011
 
@@ -126,30 +118,35 @@ sta $d020
 lda #$00
 sta $d020
 
-!loop:
-    lda $d011
-    and #%10000000
-    beq !loop-
-    lda $d012
-    cmp #$30
-    bne !loop-
+	:mov #<irq4: $fffe
+    :mov #>irq4: $ffff
+	:mov #0:$d012
+	:mov #$ff: $d019
+	:endInterrupt()
+
+
+irq4:
 inc $d020
 dec $d020
 lda #$00
 sta REG_SPRITE_ENABLE
-
-inc $d020
-_insertStateMachinesIRQ()
-dec $d020
-
-
-//----------------------------------------------
-
-	:mov #<irq: $fffe
+	:mov #<irq1: $fffe
+    :mov #>irq1: $ffff
 	:mov #rasterLine:$d012
 	:mov #$ff: $d019
 	:endInterrupt()
 
+
+
+
+//----------------------------------------------
+/*
+	:mov #<irq: $fffe
+    :mov #>irq: $ffff
+	:mov #rasterLine:$d012
+	:mov #$ff: $d019
+	:endInterrupt()
+*/
 
 /********************************************
 FUNCTIONS

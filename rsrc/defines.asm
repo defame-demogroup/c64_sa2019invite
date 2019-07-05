@@ -4,7 +4,7 @@
 .const v_background = v_bitmap + $2329
 .const v_colorram = v_bitmap + $2338 
 
-.const sm_count = 1 //state machine count per line - this affects the design of effect files!!!!
+.const sm_count = 6 //state machine count per line - this affects the design of effect files!!!!
 .const sm_delay = 2 //interframe delay for updates
 .const sm_done_flag = $ff
 
@@ -18,6 +18,9 @@
 //Values
 .const logomask1 = %00011000
 .const rasterLine = $08
+.const rasterLine2 = $8f
+.const rasterLine3 = $f8
+.const rasterLine4 = $30 //needs high bit of $d011 set!
 .const totalSpriteCount = 8 + 7
 .const spriteShiftOffsets = $100/totalSpriteCount
 .const spriteFontAddress = $4800
