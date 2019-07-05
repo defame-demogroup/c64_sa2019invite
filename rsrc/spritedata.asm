@@ -1,7 +1,5 @@
 //used for plotting the logo
-.pc = $b000
-.align $100
-.pc = * "SPRITE SCROLLER DATASETS"
+.pc = $b000 "SPRITE DATASETS"
 SPRITE_SCROLL_Y:
 .fill $10,$10
 .fill $70,easeIn(i,$10,$80,$70)
@@ -21,7 +19,6 @@ SPRITE_SCROLL_X_HI:
 }
 
 .align $100
-.pc = * "SPRITE POINTERS"
 SPRITE_POINTERS:
 .fill $20, spriteFontPointerBase //fill sprites with spaces
 

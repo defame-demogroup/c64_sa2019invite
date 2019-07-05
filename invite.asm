@@ -368,37 +368,30 @@ funcDisplaySpriteSplitB:
 DATASETS
 *********************************************/
 
+/*
+Set up the rest of the memory map here!
+*/
+
+.pc = $4000 "CHAR RAM"
+.fill $0400, $00
+
+.pc = $6000 "BITMAP"
+.fill $2000, $00
+
+.pc = $8000 "OCP BUFFER"
+.fill $2800, $00
+
+.pc=music.location "Music"
+.fill music.size, music.getData(i)
+
+_spriteFontReader("rsrc/spritefont.gif",spriteFontAddress,60)
+
+
 
 
 /********************************************
-DATASETS
+MACROS
 *********************************************/
-SM_FINISHED: //mark completed states
-.for(var i=0;i<(screen_height);i++){
-    .for(var j=0;j<screen_width;j++){
-        .byte $00
-    }
-}
-
-SM_DISABLE:
-    .byte $00
-
-SM_COMPLETED: //endstate when stat machine is done
-    .byte $00
-//set to $01 initially and SM only set to zero if not done
-
-.var bitmap_offsets = setupBitmapOffsets()
-
-SM_BITMAP_OFFSETS_LO:
-.for(var i=0; i<screen_width;i++){
-    .byte <bitmap_offsets.get(i)
-}
-
-SM_BITMAP_OFFSETS_HI:
-.for(var i=0; i<screen_width;i++){
-    .byte >bitmap_offsets.get(i)
-}
-
 /*
 These macros work with the scroller
 */
@@ -415,44 +408,20 @@ These macros work with the scroller
     .byte %10010000 
 }
 
-
- .pc=music.location "Music"
- .fill music.size, music.getData(i)
-
-/********************************************
-CALLING MACROS (to fixed address outputs)
-*********************************************/
-
-/*
-startAdr = base address of the d011 frames. Each frame contains frameSize of $d011 values and (max) logoCharRows 
-lutAdr = double-byte LUT address (lo/hi) of the frames
-frameCount = total number of frames to render
-frameSize = number of raster lines in each frame
-maxSplitSize = total raster lines to use in FLD total 
-*/
-_spriteFontReader("rsrc/spritefont.gif",spriteFontAddress,60)
-
-/********************************************
-MACROS
-*********************************************/
-
 .macro _spriteFontReader(filename, startAdr, charCount) {
     .var spriteData = List()
     .var pic = LoadPicture(filename)
-	.for (var char=0; char<charCount; char++) {
-	    .for (var row=0; row<21; row++) {
+    .for (var char=0; char<charCount; char++) {
+        .for (var row=0; row<21; row++) {
             .eval spriteData.add(pic.getSinglecolorByte((char * 3), row) ^ $ff)
             .eval spriteData.add(pic.getSinglecolorByte((char * 3)+1, row) ^ $ff)
             .eval spriteData.add(pic.getSinglecolorByte((char * 3)+2, row) ^ $ff)
         }
         .eval spriteData.add(0)
     }
-	.pc = startAdr "sprite font"
-	.fill spriteData.size(), spriteData.get(i)
+    .pc = startAdr "sprite font"
+    .fill spriteData.size(), spriteData.get(i)
 }
-
-
-
 
 
 .macro _outputMusicInfo(){
@@ -480,16 +449,3 @@ MACROS
 .print "startpage="+music.startpage
 .print "pagelength="+music.pagelength
 }
-
-
-
-/*
-Advanced Art Studio
-load address: $2000 - $471F
-$2000 - $3F3F	Bitmap
-$3F40 - $4327	Screen RAM
-$4328	Border
-$4329	Background
-$4338 - $471F	Color RAM
-*/
-

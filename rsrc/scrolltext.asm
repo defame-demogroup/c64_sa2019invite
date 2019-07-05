@@ -1,8 +1,9 @@
 //SCROLLER!!!
-.pc = $b800 "scrolltext"
+.pc = $4400 "scrolltext"
 SCROLLTEXT:
 .text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 .byte $00
+/*
 scrollColor($01)
 .text " HELLO "
 scrollSpeed($02)
@@ -88,3 +89,4 @@ scrollColor($41)
 scrollSpeed($01)
 .text "  ...GREETINGS TO EVERYONE IN DEFAME, THE SYNTAX CREW, AND ALL YOU GREAT SYNTAX PARTY PEOPLE.  "
 .byte $00
+*/

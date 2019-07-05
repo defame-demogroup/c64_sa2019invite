@@ -11,15 +11,6 @@ $4338 - $471F   Color RAM
 */
 
 
-.function setupBitmapOffsets(){
-    .var bitmap_offsets = List()
-    .for(var i=0;i<screen_width;i++){
-        .eval bitmap_offsets.add(i * 8)
-    }
-    .return bitmap_offsets
-}
-
-
 //use this to inder INSIDE IRQ
 .macro _insertStateMachinesIRQ(){
     lda SM_DISABLE
@@ -50,7 +41,17 @@ $4338 - $471F   Color RAM
 macro to insert a state machine
 don't call this!
 */
-.macro _doStateMachine(row,smIndex){
+.macro _doStateMachine(row){
+    /*
+    loop through sm_count
+    in y reg
+    jsr to sm 
+    */
+    ldy #$00
+    jsr func_callLineStateMachine
+
+
+func_callLineStateMachine:
     ldx delay: #$01
     dex
     beq !+ //no more delay, skip
@@ -62,14 +63,16 @@ don't call this!
     stx delay
 
     //read the current position of the statemachine into X
-    ldx SM_OFFSETS + (screen_height * smIndex) + row
+    lda SM_OFFSETS + (row * sm_count),y
+    tax
+    
     //check if this state machine is finished
     cpx #sm_done_flag
     bne !+ //not done - skip
     rts //state machine is done and waiting for others to finish
 !:
 
-    //Am I done?
+    //Am I done - as in, have I collided with anyone already?
     lda SM_FINISHED,x
     beq !+ //not done, skip
 
