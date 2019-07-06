@@ -1,5 +1,5 @@
 
-.pc = $ab00 "ColorQuads LUTs"
+.pc = $ac00 "ColorQuads LUTs"
 /*
 http://www.aaronbell.com/secret-colours-of-the-commodore-64/
 LUMA RAMP:

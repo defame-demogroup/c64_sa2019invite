@@ -14,78 +14,74 @@ $4338 - $471F   Color RAM
 //use this to insert OUTSIDE IRQ
 .macro _insertStateMachinesWork(irqLoaderCall){
 loop:
-    //clear the finished state of all chars on screen
-    lda #$00
-    ldx #screen_width
-!:
-    .for(var i=0;i<screen_height;i++){
-        sta SM_FINISHED + (screen_width * i) - 1,x
-    }
-    dex
-    bne !-
     //load the file
     jsr irqLoaderCall
 
-!:
+redraw:
     //render
     lda #$01
     sta SM_COMPLETED
     .for(var i=0;i<sm_count;i++){
-        ldy #i
+        ldx #i
         jsr sm00
-        ldy #i
+        ldx #i
         jsr sm01
-        ldy #i
+        ldx #i
         jsr sm02
-        ldy #i
+        ldx #i
         jsr sm03
-        ldy #i
+        ldx #i
         jsr sm04
-        ldy #i
+        ldx #i
         jsr sm05
-        ldy #i
+        ldx #i
         jsr sm06
-        ldy #i
+        ldx #i
         jsr sm07
-        ldy #i
+        ldx #i
         jsr sm08
-        ldy #i
+        ldx #i
         jsr sm09
-        ldy #i
+        ldx #i
         jsr sm10
-        ldy #i
+        ldx #i
         jsr sm11
-        ldy #i
+        ldx #i
         jsr sm12
-        ldy #i
+        ldx #i
         jsr sm13
-        ldy #i
+        ldx #i
         jsr sm14
-        ldy #i
+        ldx #i
         jsr sm15
-        ldy #i
+        ldx #i
         jsr sm16
-        ldy #i
+        ldx #i
         jsr sm17
-        ldy #i
+        ldx #i
         jsr sm18
-        ldy #i
+        ldx #i
         jsr sm19
-        ldy #i
+        ldx #i
         jsr sm20
-        ldy #i
+        ldx #i
         jsr sm21
-        ldy #i
+        ldx #i
         jsr sm22
-        ldy #i
+        ldx #i
         jsr sm23
-        ldy #i
+        ldx #i
         jsr sm24
     }
     lda SM_COMPLETED
-    bne !+
-    jmp !-
+    cmp #$01
+    beq !+
+    jmp redraw
 !:
+
+inc $d020
+jmp !-
+
     jmp loop
 
 sm00:
@@ -145,66 +141,42 @@ _doStateMachine(24)
 /*
 macro to insert a state machine
 don't call this!
+x register is the sm_count offset
 */
 .macro _doStateMachine(row){
-//Y contains state machine index for the line
-func_callLineStateMachine:
-    tya
-    tax
-    dec SM_ITEM_CURRENT_DELAY + (row * sm_count),x
+
+    //if we are done, don't change the SM_COMPLETED register
+    lda SM_STEPS + (row * sm_count),x
+    cmp #$00
+    bne !+
+    rts
+!:
+    lda #$00
+    sta SM_COMPLETED 
+    dec SM_DELAYS + (row * sm_count),x
     beq !+ //no more delay, skip
     rts
 !:
-    //reset delay here
+    //reset standard interframe delay here
     lda #sm_delay
-    sta SM_ITEM_CURRENT_DELAY + (row * sm_count),y
+    sta SM_DELAYS + (row * sm_count),x
 
-    //read the current position of the statemachine into X
-    lda SM_OFFSETS + (row * sm_count),y
-    tax
-    
-    //check if this state machine is finished
-    cpx #sm_done_flag
-    bne !+ //not done - skip
-    rts //state machine is done and waiting for others to finish
-!:
-
-    //Am I done - as in, have I collided with anyone already?
-    lda SM_FINISHED,x
-    beq !+ //not done, skip
-    //reset the state machine for next use
-    lda #$00
-    sta SM_ITEM_CURRENT_STATE + (row * sm_count),y
-    //I need to set myself as finished.
-    lda #sm_done_flag
-    sta SM_OFFSETS + (row * sm_count),y //
-    rts
-
-!:
-    //tell all other SM's that this block is taken!
-    lda #$01
-    sta SM_FINISHED,x
-    lda #$00
-    sta SM_COMPLETED //negate the complete flag so we know a state machine is still running 
+    //read the current position of the statemachine into y
+    lda SM_OFFSETS + (row * sm_count),x
+    tay
 
     //this is trying to be a switch statement 
     //by using the state, multiply by 4 and use
     //use that as the offset into a jump table 
     //which is why the NOPs are essential here
-    lda SM_ITEM_CURRENT_STATE + (row * sm_count),y //
+    lda SM_ITEM_CURRENT_STATE + (row * sm_count),x
     asl
     asl
     sta offset
-    stx tmp_x
-    tya
-    tax
     inc SM_ITEM_CURRENT_STATE + (row * sm_count),x // prep for next call
-    ldx tmp_x: #$00
     clc
     bcc offset: !+ //this is irrelevent as it is replaced
 !:
-    jmp init
-    nop
     jmp o75
     nop
     jmp o50
@@ -220,165 +192,145 @@ func_callLineStateMachine:
     jmp n75
     nop
     jmp n100
-init:
-    //initial offset
-    lda SM_DELAYS + (row * sm_count),y //
-    sta SM_ITEM_CURRENT_DELAY + (row * sm_count),y
-    rts
 
 o75:
-    lda r_colorram + (row * screen_width),x
+    lda r_colorram + (row * screen_width),y
     sta originalColorRam50
     sta originalColorRam25
-    tay
-    lda COLOR_HIGH,y
-    sta r_colorram + (row * screen_width),x
-    lda r_screen + (row * screen_width),x
+    tax
+    lda COLOR_HIGH,x
+    sta r_colorram + (row * screen_width),y
+
+    lda r_screen + (row * screen_width),y
     sta originalScreen50
     sta originalScreen25
-    tay
-    lda COLOR_HIGH,y
-    sta r_screen + (row * screen_width),x    
+    tax
+    lda COLOR_HIGH,x
+    sta r_screen + (row * screen_width),y    
     rts
 
 o50:
     lda originalColorRam50: #$00 
-    tay
-    lda COLOR_MID,y
-    sta r_colorram + (row * screen_width),x
+    tax
+    lda COLOR_MID,x
+    sta r_colorram + (row * screen_width),y
     
     lda originalScreen50: #$00
-    tay
-    lda COLOR_MID,y
-    sta r_screen + (row * screen_width),x    
+    tax
+    lda COLOR_MID,x
+    sta r_screen + (row * screen_width),y  
     rts
 
 o25:
     lda originalColorRam25: #$00 
-    tay
-    lda COLOR_LOW,y
-    sta r_colorram + (row * screen_width),x
+    tax
+    lda COLOR_LOW,x
+    sta r_colorram + (row * screen_width),y
     
     lda originalScreen25: #$00
-    tay
-    lda COLOR_LOW,y
-    sta r_screen + (row * screen_width),x
+    tax
+    lda COLOR_LOW,x
+    sta r_screen + (row * screen_width),y
     rts
 
 swap:
     lda #$00
-    sta r_colorram + (row * screen_width),x
-    sta r_screen + (row * screen_width),x
+    sta r_colorram + (row * screen_width),y
+    sta r_screen + (row * screen_width),y
 
     //set up base addresses for bitmap copy
     clc
-    lda SM_BITMAP_OFFSETS_LO,x
+    lda SM_BITMAP_OFFSETS_LO,y
     adc # <v_bitmap + (row * 8 * screen_width)
     sta map_src
-    lda SM_BITMAP_OFFSETS_HI,x
+    lda SM_BITMAP_OFFSETS_HI,y
     adc # >v_bitmap + (row * 8 * screen_width)
     sta map_src + 1
 
     clc
-    lda SM_BITMAP_OFFSETS_LO,x
+    lda SM_BITMAP_OFFSETS_LO,y
     adc # <r_bitmap + (row * 8 * screen_width)
     sta map_dst
-    lda SM_BITMAP_OFFSETS_HI,x
+    lda SM_BITMAP_OFFSETS_HI,y
     adc # >r_bitmap + (row * 8 * screen_width)
     sta map_dst + 1
 
     //copy bitmap data
-    ldy #$00
+    ldx #$00
 !:
-    lda map_src: $ffff,y //source 
-    sta map_dst: $ffff,y //destination
-    iny
-    cpy #$08
+    lda map_src: $ffff,x //source 
+    sta map_dst: $ffff,x //destination
+    inx
+    cpx #$08
     bne !-
     rts
 
 n25:
-    lda v_colorram + (row * screen_width),x
-    tay
-    lda COLOR_LOW,y
-    sta r_colorram + (row * screen_width),x
+    lda v_colorram + (row * screen_width),y
+    tax
+    lda COLOR_LOW,x
+    sta r_colorram + (row * screen_width),y
 
-    lda v_screen + (row * screen_width),x
-    tay
-    lda COLOR_LOW,y
-    sta r_screen + (row * screen_width),x
+    lda v_screen + (row * screen_width),y
+    tax
+    lda COLOR_LOW,x
+    sta r_screen + (row * screen_width),y
     rts
 
 n50:
-    lda v_colorram + (row * screen_width),x
-    tay
-    lda COLOR_MID,y
-    sta r_colorram + (row * screen_width),x
+    lda v_colorram + (row * screen_width),y
+    tax
+    lda COLOR_MID,x
+    sta r_colorram + (row * screen_width),y
 
-    lda v_screen + (row * screen_width),x
-    tay
-    lda COLOR_MID,y
-    sta r_screen + (row * screen_width),x
+    lda v_screen + (row * screen_width),y
+    tax
+    lda COLOR_MID,x
+    sta r_screen + (row * screen_width),y
     rts
 
 n75:
-    lda v_colorram + (row * screen_width),x
-    tay
-    lda COLOR_HIGH,y
-    sta r_colorram + (row * screen_width),x
-    lda v_screen + (row * screen_width),x
-    tay
-    lda COLOR_HIGH,y
-    sta r_screen + (row * screen_width),x
+    lda v_colorram + (row * screen_width),y
+    tax
+    lda COLOR_HIGH,x
+    sta r_colorram + (row * screen_width),y
+    lda v_screen + (row * screen_width),y
+    tax
+    lda COLOR_HIGH,x
+    sta r_screen + (row * screen_width),y
     rts
 
 n100:
-    lda v_colorram + (row * screen_width),x
-    sta r_colorram + (row * screen_width),x
-    lda v_screen + (row * screen_width),x
-    sta r_screen + (row * screen_width),x
+    lda v_colorram + (row * screen_width),y
+    sta r_colorram + (row * screen_width),y
+    lda v_screen + (row * screen_width),y
+    sta r_screen + (row * screen_width),y
 
     //now set up machine for next move
-    lda #$01 //never use zero as that is for first frame init only
-    sta SM_ITEM_CURRENT_STATE + (row * sm_count),y
-    lda SM_DELTAS + (row * sm_count),y //
+    lda #$00 //reset state machine to 
+    sta SM_ITEM_CURRENT_STATE + (row * sm_count),x
+
+    //we have completed a step
+    dec SM_STEPS + (row * sm_count),x
+
+    lda SM_DELTAS + (row * sm_count),x //
     and #%10000000
-    beq backwards
+    bne backwards
 
 forwards:
     clc
-    lda SM_OFFSETS + (row * sm_count),y
-    adc SM_DELTAS + (row * sm_count),y
-    sta SM_OFFSETS + (row * sm_count),y
+    lda SM_OFFSETS + (row * sm_count),x
+    adc SM_DELTAS + (row * sm_count),x
+    sta SM_OFFSETS + (row * sm_count),x
     rts
 
 backwards:
+    lda SM_DELTAS + (row * sm_count),x
+    and #%01111111
+    sta sub_val
     sec
-    lda SM_OFFSETS + (row * sm_count),y
-    sbc SM_DELTAS + (row * sm_count),y
-    sta SM_OFFSETS + (row * sm_count),y
+    lda SM_OFFSETS + (row * sm_count),x
+    sbc sub_val: #$00
+    sta SM_OFFSETS + (row * sm_count),x
     rts
 }
-
-
-//how to trigger the state machines in a cascade so you get fades etc?
-
-
-
-/*
-EFFECT_1:
-SM_OFFSETS: //x offset of each statemachine (sets initial start location and then updated per frame)
-.byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-.byte $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02
-
-SM_DELTAS: //distance deltas of each state machine - high bit is subtraction
-.byte $03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-.byte $03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-.byte $03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-
-SM_DELAYS: //initial frame delays for each state machine
-.byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
-.byte $02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02,$02
-.byte $03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03,$03
-*/

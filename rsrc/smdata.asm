@@ -9,6 +9,12 @@ SM_OFFSETS: //x offset of each statemachine (sets initial start location and the
 }
 
 .align $100
+SM_STEPS: //number of steps for the state machine to run (through a full set of states)
+.for(var i=0;i<(screen_height * sm_count);i++){
+    .byte $00
+}
+
+.align $100
 SM_DELTAS: //distance deltas of each state machine - high bit is subtraction
 .for(var i=0;i<(screen_height * sm_count);i++){
     .byte $00
@@ -20,24 +26,12 @@ SM_DELAYS: //initial frame delays for each state machine
     .byte $00
 }
 
+
+
 /********************************************
 NON OVERWRITTEN DATASET
 *********************************************/
 .pc = $b800 "SM LOCAL DATA"
-SM_FINISHED: //mark completed states in a shadow of screen mem
-.for(var i=0;i<(screen_height);i++){
-    .for(var j=0;j<screen_width;j++){
-        .byte $00
-    }
-}
-
-//stash the current dely value
-SM_ITEM_CURRENT_DELAY:
-.for(var i=0;i<screen_height;i++){
-	.for(var j=0;j<sm_count;j++){
-        .byte $01 //initialise all SM's with 01
-    }
-}
 
 //stash the current state value
 SM_ITEM_CURRENT_STATE:
@@ -46,10 +40,6 @@ SM_ITEM_CURRENT_STATE:
         .byte $00
     }
 }
-
-
-
-
 
 SM_DISABLE:
     .byte $00

@@ -1,9 +1,7 @@
 //SCROLLER!!!
 .pc = $4400 "scrolltext"
 SCROLLTEXT:
-.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
-.byte $00
-/*
+//.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 scrollColor($01)
 .text " HELLO "
 scrollSpeed($02)
@@ -11,11 +9,13 @@ scrollSpeed($02)
 scrollColor($04)
 .text "WE NEED SOME         "
 scrollColor($21)
-.text "     RASTER BARS!"
+.text " BITMAPS BITCHES    "
 scrollSpeed($00)
 .text "  "
-scrollSpeed($02)
+scrollSpeed($01)
 .text "  "
+.byte $00
+/*
 scrollSpeed($03)
 .text "  "
 scrollColor($04)

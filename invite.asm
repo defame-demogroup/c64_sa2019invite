@@ -38,9 +38,9 @@ $B000 - $CFFF Code and Data and MUSIC
 .pc = $1000 "Program"
 start:
 	:mov #$00: $d020
-	:mov #$0c: $d021
+	:mov #$00: $d021
+    :fill_1K($00, $0400) //remove this later - used for debug
 	:fill_1K($00, $d800)
-    :fill_1K($21, $0400) //clear screen with blank chars
     jsr funcInitData
     sei
     lda #$36
@@ -60,13 +60,13 @@ irq1:
 	:startInterrupt()
 //	:doubleIRQ(rasterLine)
 
-lda #$06
-sta $d020
     jsr funcDisplaySpriteSplitA
-lda #$00
-sta $d020
     lda #$ff
     sta REG_SPRITE_ENABLE
+
+    lda $d016
+    ora #%00010000
+    sta $d016
 
 	:mov #<irq2: $fffe
     :mov #>irq2: $ffff
@@ -76,12 +76,8 @@ sta $d020
 
 irq2:
 	:startInterrupt()
-lda #$04
-sta $d020
     jsr funcDisplaySpriteSplitB
-lda #$00
-sta $d020
-    //pop bottom border
+    //setup bottom border
     lda #%00111011
     sta $d011
 
@@ -94,17 +90,11 @@ sta $d020
 
 irq3:
 	:startInterrupt()
+    //pop bottom border
     lda #%00110011 //$13
     sta $d011
 
-lda #$09
-sta $d020
-    jsr music.play
-lda #$00
-sta $d020     
-
-lda #$07
-sta $d020
+    //handle multispeed scroller
     ldy zp_spriteScrollCurrentSpeed
     bne !loop+
     jsr funcRenderSpriteScroller
@@ -114,39 +104,33 @@ sta $d020
     dey
     bne !loop- 
 !skip:
+    
     jsr funcFlashSpriteColors
-lda #$00
-sta $d020
+    jsr music.play
 
 	:mov #<irq4: $fffe
     :mov #>irq4: $ffff
-	:mov #0:$d012
+	:mov #$30:$d012
+    lda $d011
+    ora #%10000000
+    sta $d011
 	:mov #$ff: $d019
 	:endInterrupt()
 
 
 irq4:
-inc $d020
-dec $d020
-lda #$00
-sta REG_SPRITE_ENABLE
+	:startInterrupt()
+    //stop sprite ghosts appearing at top of screen
+    lda #$00
+    sta REG_SPRITE_ENABLE
 	:mov #<irq1: $fffe
     :mov #>irq1: $ffff
 	:mov #rasterLine:$d012
+    lda $d011
+    and #%01111111
+    sta $d011
 	:mov #$ff: $d019
 	:endInterrupt()
-
-
-
-
-//----------------------------------------------
-/*
-	:mov #<irq: $fffe
-    :mov #>irq: $ffff
-	:mov #rasterLine:$d012
-	:mov #$ff: $d019
-	:endInterrupt()
-*/
 
 /********************************************
 FUNCTIONS
@@ -181,8 +165,6 @@ funcInitData:
 
     lda #%00001000 //set screen mem to $0000 and bitmap to $2000 (+ bank)
     sta $d018
-
-
 
     ldx #$00
     ldy #$00
