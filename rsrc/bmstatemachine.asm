@@ -79,9 +79,6 @@ redraw:
     jmp redraw
 !:
 
-inc $d020
-jmp !-
-
     jmp loop
 
 sm00:
@@ -195,39 +192,37 @@ x register is the sm_count offset
 
 o75:
     lda r_colorram + (row * screen_width),y
-    sta originalColorRam50
-    sta originalColorRam25
+    sta SM_COLOR_BUFFER + (row * screen_width),y
     tax
     lda COLOR_HIGH,x
     sta r_colorram + (row * screen_width),y
 
     lda r_screen + (row * screen_width),y
-    sta originalScreen50
-    sta originalScreen25
+    sta SM_SCREEN_BUFFER + (row * screen_width),y
     tax
     lda COLOR_HIGH,x
     sta r_screen + (row * screen_width),y    
     rts
 
 o50:
-    lda originalColorRam50: #$00 
+    lda SM_COLOR_BUFFER + (row * screen_width),y
     tax
     lda COLOR_MID,x
     sta r_colorram + (row * screen_width),y
     
-    lda originalScreen50: #$00
+    lda SM_SCREEN_BUFFER + (row * screen_width),y
     tax
     lda COLOR_MID,x
     sta r_screen + (row * screen_width),y  
     rts
 
 o25:
-    lda originalColorRam25: #$00 
+    lda SM_COLOR_BUFFER + (row * screen_width),y
     tax
     lda COLOR_LOW,x
     sta r_colorram + (row * screen_width),y
     
-    lda originalScreen25: #$00
+    lda SM_SCREEN_BUFFER + (row * screen_width),y
     tax
     lda COLOR_LOW,x
     sta r_screen + (row * screen_width),y

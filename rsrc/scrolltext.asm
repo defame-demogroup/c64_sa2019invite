@@ -1,5 +1,5 @@
 //SCROLLER!!!
-.pc = $4400 "scrolltext"
+.pc = $b400 "scrolltext"
 SCROLLTEXT:
 //.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 scrollColor($01)

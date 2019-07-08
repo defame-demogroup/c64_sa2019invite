@@ -1,5 +1,5 @@
 //used for plotting the logo
-.pc = $b000 "SPRITE DATASETS"
+.pc = $af00 "SPRITE DATASETS"
 SPRITE_SCROLL_Y:
 .fill $10,$10
 .fill $70,easeIn(i,$10,$80,$70)

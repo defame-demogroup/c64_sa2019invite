@@ -14,17 +14,20 @@ _outputMusicInfo()
 
 /*
 MEMORY MAP:
-$0400 - $0800 ???
-$0800 - $1000 SPINDLE
-$1000 - $4000 Code and Data 
-$4000 - $4400 SCREEN RAM
-$4800 - $5800 Sprite Font
-$5800 - $6000 *RESERVED FOR VIC DATA* just in case...
-$6000 - $8000 BITMAP
-$8000 - $A800 BUFFER
-$A800 - $AB00 State Machine Effect Buffer
-$AB00 - $B000 scroll text (should be enough scroll text!)
-$B000 - $CFFF Code and Data and MUSIC
+$0400-$0800 ???
+$0800-$1000 SPINDLE
+$1000-$374f Program
+$4000-$43ff CHAR RAM
+$4400-$444c scrolltext
+$4800-$56ff sprite font
+$6000-$7fff BITMAP
+$8000-$a7ff OCP BUFFER
+$a800-$ab95 state machine buffer
+$ac00-$aeff ColorQuads LUTs
+$b000-$b44f SPRITE DATASETS
+$b800-$b8e7 SM LOCAL DATA
+$c000-$cb93 Music
+
 */
 
 
@@ -359,6 +362,8 @@ Set up the rest of the memory map here!
 
 .pc = $8000 "OCP BUFFER"
 .fill $2800, $00
+
+
 
 .pc=music.location "Music"
 .fill music.size, music.getData(i)
