@@ -13,6 +13,9 @@ $4338 - $471F   Color RAM
 
 //use this to insert OUTSIDE IRQ
 .macro _insertStateMachinesWork(irqLoaderCall){
+    fill_4K($00,$e000)
+    fill_4K($00,$6000)
+    fill_4K($00,$7000)
 loop:
     //load the file
     jsr irqLoaderCall

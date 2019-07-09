@@ -14,19 +14,28 @@ _outputMusicInfo()
 
 /*
 MEMORY MAP:
-$0400-$0800 ???
+$0400-$0800 *FREE WORKING MEM
 $0800-$1000 SPINDLE
-$1000-$374f Program
+$1000-$3717 Program
+$3718-$3fff *FREE
 $4000-$43ff CHAR RAM
-$4400-$444c scrolltext
+$4400-$47ff *FREE
 $4800-$56ff sprite font
+$5700-$574f BM offsets
+$5800-$5fff *FREE
 $6000-$7fff BITMAP
 $8000-$a7ff OCP BUFFER
-$a800-$ab95 state machine buffer
 $ac00-$aeff ColorQuads LUTs
-$b000-$b44f SPRITE DATASETS
-$b800-$b8e7 SM LOCAL DATA
+$af00-$b34f SPRITE DATASETS
+$b400-$bfff scrolltext and FREE
 $c000-$cb93 Music
+
+$a800-$abff loaded transition data
+$e000-$e3ff screen working buffer
+$e400-$e7ff color working buffer
+$e800-$ea00 working data for state machines
+
+
 
 */
 
@@ -46,11 +55,12 @@ start:
 	:fill_1K($00, $d800)
     jsr funcInitData
     sei
-    lda #$36
+    lda #$35
     sta $01
     cli
 	:setupInterrupt(irq1, rasterLine) // last six chars (with a few raster lines to stabalize raster)
 //!loop:
+.pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesWork($0c90)
 
 //    jmp !loop-

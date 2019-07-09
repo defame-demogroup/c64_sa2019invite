@@ -5,7 +5,7 @@
 .const v_colorram = v_bitmap + $2338 
 
 .const sm_count = 6 //6 //state machine count per line - this affects the design of effect files!!!!
-.const sm_delay = 2 //interframe delay for updates
+.const sm_delay = 1 //interframe delay for updates
 
 .const r_screen = $4000
 .const r_colorram = $d800
