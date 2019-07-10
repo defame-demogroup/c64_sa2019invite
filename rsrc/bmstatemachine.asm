@@ -1,3 +1,4 @@
+//requires defines.asm to be loaded
 
 /*
 Virtual Bitmap Addresses:

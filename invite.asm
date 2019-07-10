@@ -71,6 +71,19 @@ start:
     // jsr stateMachineWork
     // jsr stateMachineWork
     // jsr stateMachineWork
+
+    //copy last colormap to $0400
+    ldx #$00
+!:
+    .for(var i=0;i<25;i++){
+        lda v_colorram + (i * $28),x
+        sta $0400 + (i * $28),x
+    }
+    inx
+    cpx #$28
+    beq !+
+    jmp !-
+!:
     jsr $0c90 //call the shadow scroller
 
     lda #$04
@@ -95,6 +108,20 @@ CallShadowScrollerFlag:
 /********************************************
 MAIN INTERRUPT LOOP
 *********************************************/
+irqFinal:
+    :startInterrupt()
+    lda #$00
+    sta REG_SPRITE_ENABLE
+    inc $d020
+    jsr $8006
+    inc $d020
+    jsr $8003
+    lda #$00
+    sta $d020
+    jsr music.play
+    :mov #$ff: $d019
+    :endInterrupt()
+
 
 irq1:
 	:startInterrupt()
@@ -109,16 +136,15 @@ irq1:
     sta $d016
 
 
-    inc $d020
     lda CallShadowScrollerFlag
     cmp #$01
     bne !+
-    jsr $8006
-    jsr $8003
+    :mov #<irqFinal: $fffe
+    :mov #>irqFinal: $ffff
+    :mov #rasterLine:$d012
+    :mov #$ff: $d019
+    :endInterrupt()
 !:
-    dec $d020
-
-
 	:mov #<irq2: $fffe
     :mov #>irq2: $ffff
 	:mov #rasterLine2:$d012

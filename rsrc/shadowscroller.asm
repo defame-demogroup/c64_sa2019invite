@@ -11,7 +11,8 @@ jmp func_scroll_scroller
 .label COLOR_REAL = $af00
 
 .label CHAR_MAP = $4000
-.label COLOR_MAP = $d800
+.label COLOR_MAP = $0400
+.label COLOR_RAM = $d800
 .var Y_SCROLLER_OFFSET = $00
 .var scrollFontLo = $39
 .var scrollFontHi = $3a
@@ -31,7 +32,7 @@ scrollBytePointer:
 
 //speedcode params
 .var char_map_lda_offset = 4 //hi byte of the lda color mid!
-.var color_map_lda_offset = 13
+.var color_map_lda_offset = 12
 .var speed_code_size = 16
 .var char_original_byte_offset = 1
 .var color_original_byte_offset = 9
@@ -42,20 +43,20 @@ func_map_to_speedcode:
 	ldx #$00
 !loop:
 	.for(var y=0;y<8;y++){
-		lda CHAR_MAP + (y * $28),x
+		lda CHAR_MAP + (y * $28) + (Y_SCROLLER_OFFSET * $28),x
 		sta targetCharOffset: func_draw_scroller + ((y * $28) * speed_code_size) + char_original_byte_offset
-		lda COLOR_MAP + (y * $28),x
+		lda COLOR_MAP + (y * $28) + (Y_SCROLLER_OFFSET * $28),x
 		sta targetColorOffset: func_draw_scroller + ((y * $28) * speed_code_size) + color_original_byte_offset
 		clc
 		lda targetCharOffset
-		adc #$10
+		adc #speed_code_size
 		sta targetCharOffset
 		lda targetCharOffset + 1
 		adc #$00
 		sta targetCharOffset + 1
 		clc
 		lda targetColorOffset
-		adc #$10
+		adc #speed_code_size
 		sta targetColorOffset
 		lda targetColorOffset + 1
 		adc #$00
@@ -73,23 +74,23 @@ func_map_to_speedcode:
 //draw charmap and colormap using speedcode
 //scroll the speedcode and render new char into speedcode
 func_draw_scroller:
-.for(var x=0;x<$28;x++){
 	.for(var y=0;y<8;y++){
-		ldx #$00													//offsets
-		lda COLOR_MID,x												//+2 bytes + 2 = 4
-		sta CHAR_MAP + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
-		ldx #$00													//+3 bytes = base + 8
-		lda COLOR_MID,x												//+2 bytes
-		sta COLOR_MAP + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
-																	//+3 bytes = base + 16
+		.for(var x=0;x<$28;x++){
+			ldx #$00													//offsets
+			lda COLOR_MID,x												//+2 bytes + 2 = 4
+			sta CHAR_MAP + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
+			ldx #$00													//+3 bytes = base + 8
+			lda COLOR_MID,x												//+2 bytes
+			sta COLOR_RAM + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
+																		//+3 bytes = base + 16
+		}
 	}
-}
 	rts
 
 
 func_scroll_scroller:
-	.for(var x=0;x<$27;x++){
-		.for(var y=0;y<8;y++){
+	.for(var y=0;y<8;y++){
+		.for(var x=0;x<$27;x++){
 			lda func_draw_scroller + (((x + 1) + (y * $28)) * speed_code_size) + char_map_lda_offset
 			sta func_draw_scroller + (((x + 0) + (y * $28)) * speed_code_size) + char_map_lda_offset
 			lda func_draw_scroller + (((x + 1) + (y * $28)) * speed_code_size) + color_map_lda_offset
