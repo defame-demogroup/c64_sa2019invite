@@ -29,3 +29,5 @@ There is also `make clean` to reset the invitro working directories (not Spindle
 ---
 
 # Special Developer Notes
+
+Apologies for the messy code, this was hacked together in a hurry and so there is plenty of room for improvement. Some notable notes are:
