@@ -25,9 +25,9 @@ $5700-$574f BM offsets
 $5800-$5fff *FREE
 $6000-$7fff BITMAP
 $8000-$a7ff OCP BUFFER
-$ac00-$aeff ColorQuads LUTs
-$af00-$b34f SPRITE DATASETS
-$b400-$bfff scrolltext and FREE
+$ac00-$afff ColorQuads LUTs
+$b000-$b44f SPRITE DATASETS
+$b500-$bfff scrolltext and FREE
 $c000-$cb93 Music
 
 $a800-$abff loaded transition data

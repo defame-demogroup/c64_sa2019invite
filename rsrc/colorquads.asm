@@ -70,3 +70,7 @@ COLOR_LOW:
         .byte ((hi<<4)|lo)
     }
 }
+
+.align $100
+COLOR_REAL:
+.fill $100,i
