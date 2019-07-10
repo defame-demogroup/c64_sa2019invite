@@ -12,11 +12,14 @@ $4338 - $471F   Color RAM
 
 
 //use this to insert OUTSIDE IRQ
-.macro _insertStateMachinesWork(irqLoaderCall){
+.macro _insertStateMachinesInit(){
     fill_4K($00,$e000)
     fill_4K($00,$6000)
     fill_4K($00,$7000)
-loop:
+
+}
+
+.macro _insertStateMachinesJsr(irqLoaderCall){
     //load the file
     jsr irqLoaderCall
 
@@ -83,7 +86,7 @@ redraw:
 !:
 
 //delay between pictures being displayed
-    ldy #$c0
+    ldy #$00
     ldx #$00
 !l:
     dex
@@ -97,7 +100,19 @@ redraw:
     dey
     bne !l-
 
-    jmp loop
+!l:
+    dex
+    bne !l-
+    dey
+    bne !l-
+
+!l:
+    dex
+    bne !l-
+    dey
+    bne !l-
+
+    rts
 
 sm00:
 _doStateMachine(00)

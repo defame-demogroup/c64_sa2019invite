@@ -61,7 +61,34 @@ start:
 	:setupInterrupt(irq1, rasterLine) // last six chars (with a few raster lines to stabalize raster)
 //!loop:
 .pc = * "DEBUG MAIN LOOP"
-    _insertStateMachinesWork($0c90)
+    _insertStateMachinesInit()
+    //one for each image
+    jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    jsr $0c90 //call the shadow scroller
+
+    lda #$04
+    sta $d020
+    jsr $8000 //init shadow scroller
+    lda #$00
+    sta $d020
+
+    lda #$01
+    sta CallShadowScrollerFlag
+!:
+    jmp !-
+
+stateMachineWork:
+    _insertStateMachinesJsr($0c90)
+
+CallShadowScrollerFlag:
+.byte $00
 
 //    jmp !loop-
 
@@ -80,6 +107,17 @@ irq1:
     lda $d016
     ora #%00010000
     sta $d016
+
+
+    inc $d020
+    lda CallShadowScrollerFlag
+    cmp #$01
+    bne !+
+    jsr $8006
+    jsr $8003
+!:
+    dec $d020
+
 
 	:mov #<irq2: $fffe
     :mov #>irq2: $ffff

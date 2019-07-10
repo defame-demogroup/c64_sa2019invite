@@ -6,6 +6,7 @@ invite.prg:	invite.asm
 		kick $<
 
 effects: 
+		kick rsrc/shadowscroller.asm
 		kick rsrc/sm_effect_1.asm
 		kick rsrc/sm_effect_2.asm
 		kick rsrc/sm_effect_3.asm

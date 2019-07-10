@@ -29,9 +29,6 @@ scrollTextPointer:
 scrollBytePointer:
 .byte $00
 
-irqReady:
-.byte $00
-
 //speedcode params
 .var char_map_lda_offset = 4 //hi byte of the lda color mid!
 .var color_map_lda_offset = 13
@@ -46,9 +43,9 @@ func_map_to_speedcode:
 !loop:
 	.for(var y=0;y<8;y++){
 		lda CHAR_MAP + (y * $28),x
-		sta targetCharOffset: func_draw_scroller + ((y * $28)) * speed_code_size) + char_original_byte_offset
+		sta targetCharOffset: func_draw_scroller + ((y * $28) * speed_code_size) + char_original_byte_offset
 		lda COLOR_MAP + (y * $28),x
-		sta targetColorOffset: func_draw_scroller + ((y * $28)) * speed_code_size) + color_original_byte_offset
+		sta targetColorOffset: func_draw_scroller + ((y * $28) * speed_code_size) + color_original_byte_offset
 		clc
 		lda targetCharOffset
 		adc #$10
@@ -69,8 +66,6 @@ func_map_to_speedcode:
 	beq !done+
 	jmp !loop-
 !done:
-	lda #$01
-	sta irqReady
 	rts
 
 
