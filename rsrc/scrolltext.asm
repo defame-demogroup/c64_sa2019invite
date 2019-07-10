@@ -3,17 +3,92 @@
 SCROLLTEXT:
 //.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 scrollColor($01)
-.text " HELLO "
+.text " WE INVITE YOU TO ATTEND     "
+scrollSpeed($01)
+.text " "
+scrollColor($10)
+.text "S"
+scrollColor($20)
+.text "I"
+scrollColor($10)
+.text "G"
+scrollColor($20)
+.text "G"
+scrollColor($10)
+.text "R"
+scrollColor($20)
+.text "A"
+scrollColor($10)
+.text "P"
+scrollColor($20)
+.text "H"
+scrollColor($10)
+.text " "
+scrollColor($20)
+.text "A"
+scrollColor($10)
+.text "S"
+scrollColor($20)
+.text "I"
+scrollColor($10)
+.text "A"
+scrollColor($20)
+.text " "
+scrollColor($10)
+.text "2"
+scrollColor($20)
+.text "0"
+scrollColor($10)
+.text "1"
+scrollColor($20)
+.text "9"
 scrollSpeed($02)
-.text "  PARTY PEOPLE "
-scrollColor($04)
-.text "WE NEED SOME         "
-scrollColor($21)
-.text " BITMAPS BITCHES    "
-scrollSpeed($00)
+.text "                "
+scrollColor($0e)
+.text " WE FELT LIKE WE NEEDED TO ADD SOME "
+scrollSpeed($01)
+.text " "
+scrollColor($30)
+.text " DEMOSCENE "
+scrollColor($0f)
 .text "  "
+scrollSpeed($02)
+.text " TO MAKE SIGGRAPH A LITTLE MORE EDGY SO IT COULD HANG WITH THE COOL KIDS. "
+scrollColor($0f)
+.text "  "
+scrollSpeed($03)
+.text " CREDITS FOR THIS STRANGE INVITRO GO TO "
+scrollSpeed($02)
+.text "  "
+scrollColor($40)
+.text " ZIG/DEFAME "
+scrollColor($30)
+.text " FOR CODE AND PIXEL VANDALISM "
+scrollColor($40)
+.text " SIGGRAPH ACM "
+scrollColor($30)
+.text " FOR THE ORIGINAL LOGOS "
+scrollColor($40)
+.text " 4-MAT "
+scrollColor($30)
+.text " FOR THE MUSIC "
+scrollColor($40)
+.text " SIGGRAPH DEMOSCENE CREW "
+scrollColor($30)
+.text " FOR MORAL SUPPORT AND CREATIVE SUPPORT "
 scrollSpeed($01)
 .text "  "
+scrollColor($0f)
+.text " I REMEMBER BACK IN 1994 " 
+scrollSpeed($02)
+.text " WHEN I WANTED TO GET TO A SIGGRAPH EVENT - SO EXCITED ABOUT THE NEW TECHNOLOGY IN FILM SPECIAL EFFECTS AND IN LOVE WITH MY AMIGA 2000... "
+scrollSpeed($01)
+.text "  "
+scrollColor($40)
+.text " NOW I FINALLY GET TO ATTEND 25 YEARS LATER!      "
+
+
+
 .byte $00
 /*
 scrollSpeed($03)

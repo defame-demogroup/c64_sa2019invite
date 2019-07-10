@@ -171,6 +171,14 @@ funcInitData:
     lda #>SCROLLTEXT
     sta >mem_spriteScolltextOffsetPtr
 
+    lda #$ff
+    sta REG_SPRITE_MULTICOLOUR
+
+    lda #$0c
+    sta REG_SPRITE_MC_1
+    lda #$0b
+    sta REG_SPRITE_MC_2
+
 
     //set the bank to #2 with SPINDLE resident
     lda #$3d
@@ -378,7 +386,7 @@ Set up the rest of the memory map here!
 .pc=music.location "Music"
 .fill music.size, music.getData(i)
 
-_spriteFontReader("rsrc/spritefont.gif",spriteFontAddress,60)
+_spriteFontReader("rsrc/spritefont2.png",spriteFontAddress,60)
 
 
 
@@ -404,12 +412,12 @@ These macros work with the scroller
 
 .macro _spriteFontReader(filename, startAdr, charCount) {
     .var spriteData = List()
-    .var pic = LoadPicture(filename)
+    .var pic = LoadPicture(filename, List().add($ffffff,$c0c0c0,$000000,$505050))
     .for (var char=0; char<charCount; char++) {
         .for (var row=0; row<21; row++) {
-            .eval spriteData.add(pic.getSinglecolorByte((char * 3), row) ^ $ff)
-            .eval spriteData.add(pic.getSinglecolorByte((char * 3)+1, row) ^ $ff)
-            .eval spriteData.add(pic.getSinglecolorByte((char * 3)+2, row) ^ $ff)
+            .eval spriteData.add(pic.getMulticolorByte((char * 3), row))
+            .eval spriteData.add(pic.getMulticolorByte((char * 3)+1, row))
+            .eval spriteData.add(pic.getMulticolorByte((char * 3)+2, row))
         }
         .eval spriteData.add(0)
     }

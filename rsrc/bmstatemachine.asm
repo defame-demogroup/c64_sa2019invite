@@ -82,6 +82,21 @@ redraw:
     jmp redraw
 !:
 
+//delay between pictures being displayed
+    ldy #$c0
+    ldx #$00
+!l:
+    dex
+    bne !l-
+    dey
+    bne !l-
+
+!l:
+    dex
+    bne !l-
+    dey
+    bne !l-
+
     jmp loop
 
 sm00:
@@ -149,6 +164,15 @@ x register is the sm_count offset
     lda SM_STEPS + (row * sm_count),x
     cmp #$00
     bne !+
+    //delay for consistent framerate
+    ldy #$02
+!l1:
+    ldx #$09
+!l2:
+    dex
+    bne !l2-
+    dey
+    bne !l1-
     rts
 !:
     lda #$00
