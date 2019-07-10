@@ -61,7 +61,11 @@ scrollSpeed($03)
 scrollSpeed($02)
 .text "  "
 scrollColor($40)
-.text " ZIG/DEFAME "
+.text " ZIG OF "
+scrollColor($20)
+.text "  D E F A M E   "
+scrollSpeed($00)
+.text " "
 scrollColor($30)
 .text " FOR CODE AND PIXEL VANDALISM "
 scrollColor($40)
@@ -81,14 +85,19 @@ scrollSpeed($01)
 scrollColor($0f)
 .text " I REMEMBER BACK IN 1994 " 
 scrollSpeed($02)
-.text " WHEN I WANTED TO GET TO A SIGGRAPH EVENT - SO EXCITED ABOUT THE NEW TECHNOLOGY IN FILM SPECIAL EFFECTS AND IN LOVE WITH MY AMIGA 2000... "
+.text " WHEN I SAW CUTTING EDGE SGI DEMO REELS AND WANTED TO GET TO A SIGGRAPH EVENT - SO EXCITED ABOUT NEW TECHNOLOGY MEETING ART IN THE MAINSTREAM... "
 scrollSpeed($01)
 .text "  "
 scrollColor($40)
-.text " NOW I FINALLY GET TO ATTEND 25 YEARS LATER!      "
-
-
-
+.text " NOW I FINALLY GET TO SEE A COMMODORE 64 AT SIGGRAPH 25 YEARS LATER!      "
+scrollSpeed($02)
+.text "  "
+scrollColor($10)
+.text "                "
+.text " BACK TO THE FUTURE BABY!      "
+.text "                "
+scrollSpeed($01)
+.text " "
 .byte $00
 /*
 scrollSpeed($03)
