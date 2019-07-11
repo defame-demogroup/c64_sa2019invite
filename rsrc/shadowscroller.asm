@@ -20,8 +20,11 @@ jmp func_scroll_scroller
 currentChar:
 .fill $09, $00
 
-outputBuffer:
-.fill $09, $0b
+shadowBufferA:
+.fill $0a, $00
+
+shadowBufferB:
+.fill $0a, $00
 
 
 scrollTextPointer:
@@ -77,10 +80,10 @@ func_draw_scroller:
 	.for(var y=0;y<8;y++){
 		.for(var x=0;x<$28;x++){
 			ldx #$00													//offsets
-			lda COLOR_MID,x												//+2 bytes + 2 = 4
+			lda COLOR_REAL,x												//+2 bytes + 2 = 4
 			sta CHAR_MAP + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
 			ldx #$00													//+3 bytes = base + 8
-			lda COLOR_MID,x												//+2 bytes
+			lda COLOR_REAL,x												//+2 bytes
 			sta COLOR_RAM + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
 																		//+3 bytes = base + 16
 		}
@@ -107,20 +110,40 @@ func_scroll_scroller:
 	//reset char
 	ldx #$00
 !skip:
+	cpx #$01
+	bne !+
+	ldy #$00
+
+
+!:
 	stx scrollBytePointer
 	.for (var i=0;i<8;i++){
 		clc
 		asl currentChar + i
 		bcs !draw+
+//could be transparent or in shadow
+		lda shadowBufferB + i
+		cmp #$01
+		bne !+
+		lda #>COLOR_LOW
+		jmp !transdraw+
+!:
 		lda # >COLOR_REAL
+!transdraw:
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + char_map_lda_offset
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + color_map_lda_offset
+		lda #$00
+		sta shadowBufferA + i + 1
 		jmp !done+
 !draw:
 		lda # >COLOR_MID
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + char_map_lda_offset
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + color_map_lda_offset
+		lda #$01
+		sta shadowBufferA + i + 1
 !done:
+		lda shadowBufferA + i
+		sta shadowBufferB + i
 	}
 	rts
 !newChar:
@@ -160,7 +183,7 @@ func_scroll_scroller:
 	rts
 
 SCROLLTEXT:
-.text "                       plasmatoy by zig of defame.   music by wisdom.     thanks to conjuror from onslaught for the plasma ideas.       greetz to all lovely peeps we know.   use f-keys to play with settings.  press other keys to hide scroller.   "
+.text " plasmatoy by zig of defame.   music by wisdom.     thanks to conjuror from onslaught for the plasma ideas.       greetz to all lovely peeps we know.   use f-keys to play with settings.  press other keys to hide scroller.   "
 .byte $00
 
 .align $100
