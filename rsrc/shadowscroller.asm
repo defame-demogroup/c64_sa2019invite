@@ -13,7 +13,7 @@ jmp func_scroll_scroller
 .label CHAR_MAP = $4000
 .label COLOR_MAP = $0400
 .label COLOR_RAM = $d800
-.var Y_SCROLLER_OFFSET = $00
+.var Y_SCROLLER_OFFSET = $07
 .var scrollFontLo = $39
 .var scrollFontHi = $3a
 
@@ -189,4 +189,4 @@ SCROLLTEXT:
 .align $100
 .pc=* "FONT DATA"
 FONT:
-.import c64 "delta.prg"
+.import c64 "84-font.prg"

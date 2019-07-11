@@ -87,6 +87,20 @@ redraw:
 !:
 
 //delay between pictures being displayed
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+    jsr delay
+
+delay:
     ldy #$00
     ldx #$00
 !l:
@@ -94,25 +108,6 @@ redraw:
     bne !l-
     dey
     bne !l-
-
-!l:
-    dex
-    bne !l-
-    dey
-    bne !l-
-
-!l:
-    dex
-    bne !l-
-    dey
-    bne !l-
-
-!l:
-    dex
-    bne !l-
-    dey
-    bne !l-
-
     rts
 
 sm00:

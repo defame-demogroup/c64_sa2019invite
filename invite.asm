@@ -64,13 +64,12 @@ start:
     _insertStateMachinesInit()
     //one for each image
     jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
 
     //copy last colormap to $0400
     ldx #$00
@@ -85,13 +84,7 @@ start:
     jmp !-
 !:
     jsr $0c90 //call the shadow scroller
-
-    lda #$04
-    sta $d020
     jsr $8000 //init shadow scroller
-    lda #$00
-    sta $d020
-
     lda #$01
     sta CallShadowScrollerFlag
 !:
@@ -112,12 +105,10 @@ irqFinal:
     :startInterrupt()
     lda #$00
     sta REG_SPRITE_ENABLE
-    inc $d020
     jsr $8006
-    inc $d020
     jsr $8003
-    lda #$00
-    sta $d020
+    lda #%00110011 //$13
+    sta $d011
     jsr music.play
     :mov #$ff: $d019
     :endInterrupt()
@@ -141,7 +132,7 @@ irq1:
     bne !+
     :mov #<irqFinal: $fffe
     :mov #>irqFinal: $ffff
-    :mov #rasterLine:$d012
+    :mov #$b0:$d012
     :mov #$ff: $d019
     :endInterrupt()
 !:
