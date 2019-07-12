@@ -4,30 +4,34 @@ invite.prg
 
 #defame logo
 rsrc/img5.prg				8000	2 
-rsrc/sm_effect_4.prg		a800	2
+rsrc/sm_effect_1.prg		a800	2
 
 #presents
 rsrc/img7.prg				8000	2 
-rsrc/sm_effect_5.prg		a800	2
+rsrc/sm_effect_2.prg		a800	2
 
 #siggraph asia
-rsrc/img2.prg				8000	2 
-rsrc/sm_effect_1.prg		a800	2
+#rsrc/img2.prg				8000	2 
+#rsrc/sm_effect_3.prg		a800	2
 
 #event text
-rsrc/img4.prg				8000	2 
-rsrc/sm_effect_3.prg		a800	2
+#rsrc/img4.prg				8000	2 
+#rsrc/sm_effect_4.prg		a800	2
+
+#kangaroo
+#rsrc/img3.prg				8000	2 
+#rsrc/sm_effect_5.prg		a800	2
+
+#australia
+#rsrc/img6.prg				8000	2 
+#rsrc/sm_effect_6.prg		a800	2
+
+#event text
+#rsrc/img4.prg				8000	2 
+#rsrc/sm_effect_7.prg		a800	2
 
 #kangaroo
 rsrc/img3.prg				8000	2 
-rsrc/sm_effect_2.prg		a800	2
-
-#australia
-rsrc/img6.prg				8000	2 
-rsrc/sm_effect_5.prg		a800	2
-
-#event text
-rsrc/img4.prg				8000	2 
-rsrc/sm_effect_3.prg		a800	2
+rsrc/sm_effect_8.prg		a800	2
 
 rsrc/shadowscroller.prg     8000    2

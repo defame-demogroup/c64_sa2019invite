@@ -63,10 +63,11 @@ start:
 .pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesInit()
     //one for each image
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
     jsr stateMachineWork
     jsr stateMachineWork
     jsr stateMachineWork
@@ -103,13 +104,27 @@ MAIN INTERRUPT LOOP
 *********************************************/
 irqFinal:
     :startInterrupt()
-    lda #$00
+    lda #$ff
     sta REG_SPRITE_ENABLE
+    //setup bottom border
+    lda #%00111011 //$1b
+    sta $d011
+inc $d020
     jsr $8006
-    jsr $8003
+dec $d020
+//TODO: insert sprite mover in here!
+
+     //pop bottom border
+!:
+    lda $d012
+    cmp #$f8
+    bne !-
     lda #%00110011 //$13
     sta $d011
+dec $d020
+    jsr $8003
     jsr music.play
+inc $d020
     :mov #$ff: $d019
     :endInterrupt()
 
@@ -132,7 +147,7 @@ irq1:
     bne !+
     :mov #<irqFinal: $fffe
     :mov #>irqFinal: $ffff
-    :mov #$b0:$d012
+    :mov #$60:$d012
     :mov #$ff: $d019
     :endInterrupt()
 !:

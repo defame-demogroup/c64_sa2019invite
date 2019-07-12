@@ -99,10 +99,14 @@ redraw:
     jsr delay
     jsr delay
     jsr delay
-
 delay:
     ldy #$00
     ldx #$00
+!l:
+    dex
+    bne !l-
+    dey
+    bne !l-
 !l:
     dex
     bne !l-

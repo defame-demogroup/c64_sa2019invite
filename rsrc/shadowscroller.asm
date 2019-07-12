@@ -26,10 +26,6 @@ shadowBufferA:
 shadowBufferB:
 .fill $0a, $00
 
-
-scrollTextPointer:
-.byte $00
-
 scrollBytePointer:
 .byte $00
 
@@ -149,13 +145,18 @@ func_scroll_scroller:
 !newChar:
 	lda #$00
 	sta OffsetHi
-	ldx scrollTextPointer
-	inc scrollTextPointer
-	lda SCROLLTEXT,x
+	lda scrptr: SCROLLTEXT
+	inc scrptr
+	bne !+
+	inc scrptr+1
+!:
+	cmp #$00
 	bne !skip+
-	ldx #$00
-	sta scrollTextPointer
-	lda SCROLLTEXT,x
+	lda #>SCROLLTEXT
+	sta scrptr+1
+	lda #<SCROLLTEXT
+	sta scrptr
+	lda #$20
 !skip:
 	clc
 	asl 
@@ -183,10 +184,10 @@ func_scroll_scroller:
 	rts
 
 SCROLLTEXT:
-.text " plasmatoy by zig of defame.   music by wisdom.     thanks to conjuror from onslaught for the plasma ideas.       greetz to all lovely peeps we know.   use f-keys to play with settings.  press other keys to hide scroller.   "
+.text " greets fly out to   ...chrome  disaster area  digital access  cygnus oz  duck and chicken  funkentstort  ikon visual  jimage  the force  desire  0f.digital  niknak  hedonist  enduro  evylz  impbox  glitter critter  sexdata  ttt  reset  uncle k  jesder  croy  aday  epicentre ...and the overseas fan club.... abyss connection   amnesty  artstate  arise  arsenic  atlantis  artline designs  bonzai  booze  camelot  censor  chorus  cosine  crest  dekadence  digital excess  delysid  elysium  excess  extend  exon  fairlight  focus  fossil  genesis  hitmen  h'n't  hoaxers  hokuto  laxity  lepsi de  level 64  maniacs of noise  multistyle labs  mayday  noice  nah kolor  nostalgia offence  origo dreamline  oxyron  padua  panda design  plush  prosonix  resource  role  samar  shape  success + trc  svenonacid  the dreams  the solution  triad  trsi  vibrants  vision  viruz  wrath  x-ample.....   see you at the siggraph event  17-20 november 2019  bcec  brisbane  australia...                  "
 .byte $00
 
 .align $100
 .pc=* "FONT DATA"
 FONT:
-.import c64 "84-font.prg"
+.import c64 "font4.prg"

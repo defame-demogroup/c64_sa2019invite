@@ -44,52 +44,88 @@ scrollColor($20)
 .text "9"
 scrollSpeed($02)
 .text "                "
-scrollColor($0e)
-.text " WE FELT LIKE WE NEEDED TO ADD SOME "
-scrollSpeed($01)
-.text " "
 scrollColor($30)
-.text " DEMOSCENE "
-scrollColor($0f)
-.text "  "
-scrollSpeed($02)
-.text " TO MAKE SIGGRAPH A LITTLE MORE EDGY SO IT COULD HANG WITH THE COOL KIDS. "
-scrollColor($0f)
-.text "  "
+.text " DEMOSCENE EVENT "
+scrollColor($0e)
+.text " "
+scrollSpeed($01)
+.text " 17 - 20 NOVEMBER 2019  BCEC, BRISBANE, AUSTRALIA "
 scrollSpeed($03)
+.text " "
+scrollColor($0d)
 .text " CREDITS FOR THIS STRANGE INVITRO GO TO "
 scrollSpeed($02)
 .text "  "
 scrollColor($40)
 .text " ZIG OF "
 scrollColor($20)
-.text "  D E F A M E "
+.text "  D E F A M E"
+scrollSpeed($01)
+.text " "
 scrollSpeed($00)
 .text " "
 scrollColor($30)
+.text " "
+scrollSpeed($02)
+.text " "
+scrollSpeed($03)
 .text " FOR CODE AND PIXEL VANDALISM "
+scrollSpeed($02)
+.text " "
+scrollSpeed($01)
+.text " "
 scrollColor($40)
 .text " SIGGRAPH ACM "
+scrollSpeed($02)
+.text " "
+scrollSpeed($03)
+.text " "
 scrollColor($30)
 .text " FOR THE ORIGINAL LOGOS "
-scrollColor($40)
-.text " 4-MAT "
-scrollColor($30)
-.text " FOR THE MUSIC "
-scrollColor($40)
-.text " SIGGRAPH DEMOSCENE CREW "
-scrollColor($30)
-.text " FOR MORAL SUPPORT AND CREATIVE SUPPORT "
+scrollSpeed($02)
+.text " "
 scrollSpeed($01)
+.text " "
+scrollColor($40)
+.text " 4-MAT"
+scrollSpeed($02)
+.text " "
+scrollSpeed($03)
+.text " "
+scrollColor($30)
+.text " FOR THE GREAT MUSIC "
+scrollSpeed($02)
 .text "  "
 scrollColor($0f)
-.text " I REMEMBER BACK IN 1994 " 
+.text " I REMEMBER "
+scrollColor($0e)
+.text "BACK IN "
+scrollColor($0d)
+.text "1994 " 
+scrollSpeed($03)
+.text "  "
+scrollColor($0f)
+.text " WHEN I SAW "
+scrollColor($0a)
+.text "CUTTING EDGE "
+scrollColor($10)
+.text "SGI "
+scrollColor($0e)
+.text "DEMO REELS AND WANTED TO GET TO A "
+scrollColor($40)
+.text "SIGGRAPH "
+scrollColor($0e)
+.text "EVENT "
+scrollColor($0d)
+.text "- SO EXCITED ABOUT NEW TECHNOLOGY MEETING ART IN THE MAINSTREAM... "
 scrollSpeed($02)
-.text " WHEN I SAW CUTTING EDGE SGI DEMO REELS AND WANTED TO GET TO A SIGGRAPH EVENT - SO EXCITED ABOUT NEW TECHNOLOGY MEETING ART IN THE MAINSTREAM... "
-scrollSpeed($01)
 .text "  "
 scrollColor($40)
-.text " NOW I FINALLY GET TO SEE A COMMODORE 64 AT SIGGRAPH 25 YEARS LATER!      "
+.text " NOW I FINALLY GET TO SEE A "
+scrollColor($30)
+.text "COMMODORE 64 "
+scrollColor($40)
+.text "AT SIGGRAPH 25 YEARS LATER!      "
 scrollSpeed($02)
 .text "  "
 scrollColor($10)
