@@ -1,5 +1,5 @@
 //SCROLLER!!!
-.pc = $b500 "scrolltext"
+.pc = $bc00 "scrolltext"
 SCROLLTEXT:
 //.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
 scrollColor($01)
@@ -105,19 +105,11 @@ scrollColor($0d)
 scrollSpeed($03)
 .text "  "
 scrollColor($0f)
-.text " WHEN I SAW "
-scrollColor($0a)
-.text "CUTTING EDGE "
-scrollColor($10)
-.text "SGI "
-scrollColor($0e)
-.text "DEMO REELS AND WANTED TO GET TO A "
+.text " WHEN I WANTED TO GET TO A "
 scrollColor($40)
 .text "SIGGRAPH "
 scrollColor($0e)
 .text "EVENT "
-scrollColor($0d)
-.text "- SO EXCITED ABOUT NEW TECHNOLOGY MEETING ART IN THE MAINSTREAM... "
 scrollSpeed($02)
 .text "  "
 scrollColor($40)
@@ -129,11 +121,11 @@ scrollColor($40)
 scrollSpeed($02)
 .text "  "
 scrollColor($10)
-.text "                "
+.text "         "
 .text " BACK TO THE FUTURE BABY!      "
 .text "                "
 scrollSpeed($01)
-.text " "
+.text "                                                       "
 .byte $00
 /*
 scrollSpeed($03)

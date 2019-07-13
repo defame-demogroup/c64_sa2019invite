@@ -63,11 +63,11 @@ start:
 .pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesInit()
     //one for each image
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
     jsr stateMachineWork
     jsr stateMachineWork
     jsr stateMachineWork
@@ -84,10 +84,18 @@ start:
     beq !+
     jmp !-
 !:
+    lda #$00
+    sta endSpriteEnable
     jsr $0c90 //call the shadow scroller
     jsr $8000 //init shadow scroller
     lda #$01
     sta CallShadowScrollerFlag
+    jsr $0c90 //load sprites 
+    jsr $4a00 //init sprite setup
+    lda #$ff
+    sta endSpriteEnable
+    lda #$01
+    sta CallSpriteLogoFlag
 !:
     jmp !-
 
@@ -104,16 +112,17 @@ MAIN INTERRUPT LOOP
 *********************************************/
 irqFinal:
     :startInterrupt()
-    lda #$ff
+    lda endSpriteEnable: #$00
     sta REG_SPRITE_ENABLE
     //setup bottom border
     lda #%00111011 //$1b
     sta $d011
-inc $d020
     jsr $8006
-dec $d020
 //TODO: insert sprite mover in here!
-
+    lda CallSpriteLogoFlag: #$00
+    cmp #$01
+    bne !+
+    jsr $4c00 
      //pop bottom border
 !:
     lda $d012
@@ -121,10 +130,8 @@ dec $d020
     bne !-
     lda #%00110011 //$13
     sta $d011
-dec $d020
     jsr $8003
     jsr music.play
-inc $d020
     :mov #$ff: $d019
     :endInterrupt()
 

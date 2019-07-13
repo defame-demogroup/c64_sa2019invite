@@ -5,10 +5,10 @@ jmp func_scroll_scroller
 
 
 //NOTE: this is compiled separately from the rest of the code - expects colorquads at $ac00
-.label COLOR_HIGH = $ac00
-.label COLOR_MID = $ad00
-.label COLOR_LOW = $ae00
-.label COLOR_REAL = $af00
+.label COLOR_HIGH = $b000
+.label COLOR_MID = $b100
+.label COLOR_LOW = $b200
+.label COLOR_REAL = $b300
 
 .label CHAR_MAP = $4000
 .label COLOR_MAP = $0400
@@ -132,7 +132,7 @@ func_scroll_scroller:
 		sta shadowBufferA + i + 1
 		jmp !done+
 !draw:
-		lda # >COLOR_MID
+		lda # >COLOR_HIGH
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + char_map_lda_offset
 		sta func_draw_scroller + (($27 + (i * $28)) * speed_code_size) + color_map_lda_offset
 		lda #$01
@@ -184,10 +184,10 @@ func_scroll_scroller:
 	rts
 
 SCROLLTEXT:
-.text " greets fly out to   ...chrome  disaster area  digital access  cygnus oz  duck and chicken  funkentstort  ikon visual  jimage  the force  desire  0f.digital  niknak  hedonist  enduro  evylz  impbox  glitter critter  sexdata  ttt  reset  uncle k  jesder  croy  aday  epicentre ...and the overseas fan club.... abyss connection   amnesty  artstate  arise  arsenic  atlantis  artline designs  bonzai  booze  camelot  censor  chorus  cosine  crest  dekadence  digital excess  delysid  elysium  excess  extend  exon  fairlight  focus  fossil  genesis  hitmen  h'n't  hoaxers  hokuto  laxity  lepsi de  level 64  maniacs of noise  multistyle labs  mayday  noice  nah kolor  nostalgia offence  origo dreamline  oxyron  padua  panda design  plush  prosonix  resource  role  samar  shape  success + trc  svenonacid  the dreams  the solution  triad  trsi  vibrants  vision  viruz  wrath  x-ample.....   see you at the siggraph event  17-20 november 2019  bcec  brisbane  australia...                  "
+.text " greets fly out to   ...chrome,  disaster area,  digital access,  cygnus oz,  duck and chicken,  funkentstort,  ikon visual,  jimage,  the force,  desire,  0f.digital,  niknak,  hedonist,  enduro,  evylz,  impbox,  glitter critter,  sexdata,  ttt,  reset,  uncle k,  jesder,  croy,  aday,  epicentre, and the syntax crew   ...and the overseas fan club.... abyss connection,   amnesty,  artstate,  arise,  arsenic,  atlantis,  artline designs,  bonzai,  booze,  camelot,  censor,  chorus,  cosine,  crest,  dekadence,  digital excess,  delysid,  elysium,  excess,  extend,  exon,  fairlight,  focus,  fossil,  genesis-project,  hitmen,  hack n' trade,  hoaxers,  hokuto force, laxity,  lepsi developments,  level 64,  maniacs of noise,  multistyle labs,  mayday,  noice,  nah kolor,  nostalgia,  offence,  origo dreamline,  oxyron,  padua,  panda design,  plush,  prosonix,  resource,  role,  samar,  shape,  success + trc,  svenonacid,  the dreams,  the solution,  triad,  trsi,  vibrants,  vision,  viruz,  wrath,  x-ample ...   see you at the siggraph event  17-20 november 2019,  bcec,  brisbane,  australia...                  "
 .byte $00
 
 .align $100
 .pc=* "FONT DATA"
 FONT:
-.import c64 "font4.prg"
+.import c64 "font-47.prg"
