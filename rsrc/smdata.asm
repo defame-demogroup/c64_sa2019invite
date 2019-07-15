@@ -10,11 +10,11 @@ OVERWRITTEN DATASET - Spindle blows these up
 NON LOADED DATASET
 *********************************************/
 //stash the current state value
-.label SM_ITEM_CURRENT_STATE = $e800
-.label SM_DISABLE = $e900
-.label SM_COMPLETED = $e901 //endstate when stat machine is done
-.label SM_SCREEN_BUFFER = $e000
-.label SM_COLOR_BUFFER = $e400
+.label SM_ITEM_CURRENT_STATE = $4400
+.label SM_DISABLE = $4500
+.label SM_COMPLETED = $4501 //endstate when stat machine is done
+.label SM_SCREEN_BUFFER = $5800
+.label SM_COLOR_BUFFER = $5c00
 
 /*************
 LOOKUP DATASETS

@@ -20,9 +20,12 @@ $1000-$3717 Program
 $3718-$3fff *FREE
 $4000-$43ff CHAR RAM
 $4400-$47ff *FREE
+    $4400 - $4600 working data for SM
 $4800-$56ff sprite font
 $5700-$574f BM offsets
 $5800-$5fff *FREE
+    $5800 - $5bff screen working
+    $5c00 - $5fff color working
 $6000-$7fff BITMAP
 $8000-$a7ff OCP BUFFER
 $ac00-$afff ColorQuads LUTs
@@ -35,6 +38,12 @@ $e000-$e3ff screen working buffer
 $e400-$e7ff color working buffer
 $e800-$ea00 working data for state machines
 
+
+TODO:
+Music to $e000
+Update memory map
+$b000 - $c000 -> $c000 - $cfff
+make scroller work on 1 x 2 chars - scrolling 16 chars 
 
 
 */
