@@ -1,6 +1,9 @@
 
-
+#main program entry point
 invite.prg
+
+#load the music
+rsrc/e000-music.prg			e000 	2
 
 #defame logo
 rsrc/img5.prg				8000	2 

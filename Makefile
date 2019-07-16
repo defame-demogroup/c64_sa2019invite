@@ -38,6 +38,7 @@ disk.d64:	script invite.prg rsrc/shadowscroller.prg rsrc/sm_effect_1.prg rsrc/sm
 clean:
 		rm *.sym *.prg *.d64
 		rm rsrc/*.sym rsrc/sm_effect_*.prg
+		rm rsrc/shadowscroller.prg rsrc/spritelogo.prg
 
 run:	disk.d64
 		x64 disk.d64 >/dev/null

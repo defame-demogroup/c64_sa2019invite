@@ -80,8 +80,7 @@ func_draw_scroller:
 			sta CHAR_MAP + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
 			ldx #$00													//+3 bytes = base + 8
 			lda COLOR_REAL,x												//+2 bytes
-			sta COLOR_RAM + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes
-																		//+3 bytes = base + 16
+			sta COLOR_RAM + x + (y * $28) + (Y_SCROLLER_OFFSET * $28)	//+3 bytes																		//+3 bytes = base + 16
 		}
 	}
 	rts
@@ -184,7 +183,7 @@ func_scroll_scroller:
 	rts
 
 SCROLLTEXT:
-.text " greets fly out to   ...chrome,  disaster area,  digital access,  cygnus oz,  duck and chicken,  funkentstort,  ikon visual,  jimage,  the force,  desire,  0f.digital,  niknak,  hedonist,  enduro,  evylz,  impbox,  glitter critter,  sexdata,  ttt,  reset,  uncle k,  jesder,  croy,  aday,  epicentre, and the syntax crew   ...and the overseas fan club.... abyss connection,   amnesty,  artstate,  arise,  arsenic,  atlantis,  artline designs,  bonzai,  booze,  camelot,  censor,  chorus,  cosine,  crest,  dekadence,  digital excess,  delysid,  elysium,  excess,  extend,  exon,  fairlight,  focus,  fossil,  genesis-project,  hitmen,  hack n' trade,  hoaxers,  hokuto force, laxity,  lepsi developments,  level 64,  maniacs of noise,  multistyle labs,  mayday,  noice,  nah kolor,  nostalgia,  offence,  origo dreamline,  oxyron,  padua,  panda design,  plush,  prosonix,  resource,  role,  samar,  shape,  success + trc,  svenonacid,  the dreams,  the solution,  triad,  trsi,  vibrants,  vision,  viruz,  wrath,  x-ample ...   see you at the siggraph event  17-20 november 2019,  bcec,  brisbane,  australia...                  "
+.text " greets fly out to   ...chrome,  disaster area,  digital access,  cygnus oz,  duck and chicken,  funkentstort,  ikon visual,  jimage,  the force,  desire,  0f.digital,  niknak,  hedonist,  enduro,  evylz,  impbox,  glitter critter,  sexdata,  ttt,  reset,  uncle k,  jesder,  croy,  aday,  epicentre, and the syntax crew   ...and the overseas fan club.... abyss connection,   amnesty,  artstate,  arise,  arsenic,  atlantis,  artline designs,  bonzai,  booze,  camelot,  censor,  chorus,  cosine,  crest,  dekadence,  digital excess,  delysid,  elysium,  excess,  extend,  exon,  fairlight,  focus,  fossil,  genesis-project,  hitmen,  hack n' trade,  hoaxers,  hokuto force, laxity,  lepsi developments,  level 64,  maniacs of noise,  multistyle labs,  mayday,  noice,  nah kolor,  nostalgia,  offence,  origo dreamline,  oxyron,  padua,  panda design,  pegboard nerds, plush,  prosonix,  resource,  role,  samar,  shape,  success + trc,  svenonacid,  the dreams,  the solution,  triad,  trsi,  vibrants,  vision,  viruz,  wrath,  x-ample ...   see you at the siggraph event  17-20 november 2019,  bcec,  brisbane,  australia...                  "
 .byte $00
 
 .align $100

@@ -8,10 +8,6 @@
 .import source "rsrc/colorquads.asm"
 .import source "rsrc/spritedata.asm"
 
-.var music = LoadSid("rsrc/Very_Bland.sid")
-
-_outputMusicInfo()
-
 /*
 MEMORY MAP:
 $0400-$0800 *FREE WORKING MEM
@@ -34,10 +30,8 @@ $b500-$bfff scrolltext and FREE
 $c000-$cb93 Music
 
 $a800-$abff loaded transition data
-$e000-$e3ff screen working buffer
-$e400-$e7ff color working buffer
-$e800-$ea00 working data for state machines
 
+$e000-$fxxx music
 
 TODO:
 Music to $e000
@@ -58,16 +52,19 @@ make scroller work on 1 x 2 chars - scrolling 16 chars
 */
 .pc = $1000 "Program"
 start:
+
 	:mov #$00: $d020
 	:mov #$00: $d021
-    :fill_1K($00, $0400) //remove this later - used for debug
+    :fill_1K($20, $0400) //remove this later - used for debug
 	:fill_1K($00, $d800)
     jsr funcInitData
-    sei
-    lda #$35
-    sta $01
-    cli
 	:setupInterrupt(irq1, rasterLine) // last six chars (with a few raster lines to stabalize raster)
+    //interrupts and memory are setup, now load music.
+    jsr $0c90
+    _injectMusicReset()
+    lda #$01
+    sta CallMusicFlag //allow interrupts to play music now
+
 //!loop:
 .pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesInit()
@@ -114,11 +111,45 @@ stateMachineWork:
 CallShadowScrollerFlag:
 .byte $00
 
+CallMusicFlag:
+.byte $00
+
+.macro _injectMusicReset(){
+    lda #$00
+    jsr $e000
+}
+
+.macro _injectMusicMain(debugColor){
+    lda CallMusicFlag
+    beq !+
+    // lda #debugColor
+    // sta $d020
+    jsr $e003
+    // lda #$00
+    // sta $d020
+!:
+}
+
+.macro _injectMusicSpeed(debugColor){
+    lda CallMusicFlag
+    beq !+
+    // lda #debugColor
+    // sta $d020
+    jsr $e006
+    // lda #$00
+    // sta $d020
+!:
+}
+
 //    jmp !loop-
 
 /********************************************
 MAIN INTERRUPT LOOP
 *********************************************/
+
+
+//this is the interrupt call when we are running shadowscroller
+
 irqFinal:
     :startInterrupt()
     lda endSpriteEnable: #$00
@@ -126,24 +157,27 @@ irqFinal:
     //setup bottom border
     lda #%00111011 //$1b
     sta $d011
+_injectMusicMain($01)
     jsr $8006
-//TODO: insert sprite mover in here!
     lda CallSpriteLogoFlag: #$00
     cmp #$01
     bne !+
     jsr $4c00 
-     //pop bottom border
+!:
+_injectMusicSpeed($02)
 !:
     lda $d012
     cmp #$f8
     bne !-
     lda #%00110011 //$13
     sta $d011
+_injectMusicSpeed($03)
     jsr $8003
-    jsr music.play
+_injectMusicSpeed($04)
     :mov #$ff: $d019
     :endInterrupt()
 
+//these are the interrupt chains for running the sprite multiplexer
 
 irq1:
 	:startInterrupt()
@@ -157,7 +191,11 @@ irq1:
     ora #%00010000
     sta $d016
 
+_injectMusicMain($01)
 
+
+
+    //flag to toggle interrupt chains so it points to shadowscroller
     lda CallShadowScrollerFlag
     cmp #$01
     bne !+
@@ -172,14 +210,18 @@ irq1:
 	:mov #rasterLine2:$d012
 	:mov #$ff: $d019
 	:endInterrupt()
-
 irq2:
 	:startInterrupt()
     jsr funcDisplaySpriteSplitB
     //setup bottom border
     lda #%00111011
     sta $d011
-
+_injectMusicSpeed($02)
+    ldx #$00
+    !:
+    dex
+    bne !-
+_injectMusicSpeed($04)
 	:mov #<irq3: $fffe
     :mov #>irq3: $ffff
 	:mov #rasterLine3:$d012
@@ -205,7 +247,9 @@ irq3:
 !skip:
     
     jsr funcFlashSpriteColors
-    jsr music.play
+
+_injectMusicSpeed($03)
+
 
 	:mov #<irq4: $fffe
     :mov #>irq4: $ffff
@@ -272,11 +316,6 @@ funcInitData:
 
     lda #%00001000 //set screen mem to $0000 and bitmap to $2000 (+ bank)
     sta $d018
-
-    ldx #$00
-    ldy #$00
-    lda #music.startSong-1
-    jsr music.init
 
     lda #$c0
 !loop:
@@ -467,15 +506,7 @@ Set up the rest of the memory map here!
 .pc = $8000 "OCP BUFFER"
 .fill $2800, $00
 
-
-
-.pc=music.location "Music"
-.fill music.size, music.getData(i)
-
 _spriteFontReader("rsrc/spritefont2.png",spriteFontAddress,60)
-
-
-
 
 /********************************************
 MACROS
@@ -511,29 +542,3 @@ These macros work with the scroller
     .fill spriteData.size(), spriteData.get(i)
 }
 
-
-.macro _outputMusicInfo(){
-    //----------------------------------------------------------
-// Print the music info while assembling
-.print ""
-.print "SID Data"
-.print "--------"
-.print "location=$"+toHexString(music.location)
-.print "init=$"+toHexString(music.init)
-.print "play=$"+toHexString(music.play)
-.print "songs="+music.songs
-.print "startSong="+music.startSong
-.print "size=$"+toHexString(music.size)
-.print "name="+music.name
-.print "author="+music.author
-.print "copyright="+music.copyright
-.print ""
-.print "Additional tech data"
-.print "--------------------"
-.print "header="+music.header
-.print "header version="+music.version
-.print "flags="+toBinaryString(music.flags)
-.print "speed="+toBinaryString(music.speed)
-.print "startpage="+music.startpage
-.print "pagelength="+music.pagelength
-}

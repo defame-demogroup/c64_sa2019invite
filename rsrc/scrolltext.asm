@@ -87,7 +87,7 @@ scrollSpeed($02)
 scrollSpeed($01)
 .text " "
 scrollColor($40)
-.text " 4-MAT"
+.text " FLIPSIDE"
 scrollSpeed($02)
 .text " "
 scrollSpeed($03)
@@ -112,12 +112,20 @@ scrollColor($0e)
 .text "EVENT "
 scrollSpeed($02)
 .text "  "
-scrollColor($40)
-.text " NOW I FINALLY GET TO SEE A "
+scrollColor($03)
+.text " NOW I "
+scrollColor($02)
+.text "FINALLY "
+scrollColor($03)
+.text "GET TO SEE A "
 scrollColor($30)
 .text "COMMODORE 64 "
+scrollColor($04)
+.text "AT "
 scrollColor($40)
-.text "AT SIGGRAPH 25 YEARS LATER!      "
+.text "SIGGRAPH "
+scrollColor($20)
+.text "25 YEARS LATER!      "
 scrollSpeed($02)
 .text "  "
 scrollColor($10)
