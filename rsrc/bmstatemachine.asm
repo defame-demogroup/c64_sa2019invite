@@ -98,7 +98,6 @@ redraw:
     jsr delay
     jsr delay
     jsr delay
-    jsr delay
 delay:
     ldy #$00
     ldx #$00

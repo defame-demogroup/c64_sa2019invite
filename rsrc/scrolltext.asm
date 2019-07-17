@@ -2,7 +2,7 @@
 .pc = $bc00 "scrolltext"
 SCROLLTEXT:
 //.text " HELLO THIS IS AN EXAMPLE WELCOME TO THIS EXAMPLE WELCOME TO THIS EXAMPLE "
-scrollColor($01)
+scrollColor($03)
 .text " WE INVITE YOU TO ATTEND     "
 scrollSpeed($01)
 .text " "
@@ -57,7 +57,9 @@ scrollColor($0d)
 scrollSpeed($02)
 .text "  "
 scrollColor($40)
-.text " ZIG OF "
+.text " ZIG "
+scrollColor($05)
+.text "OF "
 scrollColor($20)
 .text "  D E F A M E"
 scrollSpeed($01)
@@ -69,31 +71,35 @@ scrollColor($30)
 scrollSpeed($02)
 .text " "
 scrollSpeed($03)
-.text " FOR CODE AND PIXEL VANDALISM "
+.text "FOR CODE AND PIXEL VANDALISM "
 scrollSpeed($02)
 .text " "
 scrollSpeed($01)
 .text " "
 scrollColor($40)
-.text " SIGGRAPH ACM "
+.text " SIGGRAPH ACM"
 scrollSpeed($02)
 .text " "
 scrollSpeed($03)
 .text " "
 scrollColor($30)
-.text " FOR THE ORIGINAL LOGOS "
+.text "FOR THE ORIGINAL LOGOS "
 scrollSpeed($02)
 .text " "
 scrollSpeed($01)
 .text " "
 scrollColor($40)
 .text " FLIPSIDE"
+scrollColor($05)
+.text " OF "
+scrollColor($40)
+.text " PEGBOARD NERDS"
 scrollSpeed($02)
 .text " "
 scrollSpeed($03)
 .text " "
 scrollColor($30)
-.text " FOR THE GREAT MUSIC "
+.text "FOR THE GREAT MUSIC "
 scrollSpeed($02)
 .text "  "
 scrollColor($0f)
@@ -127,12 +133,12 @@ scrollColor($40)
 scrollColor($20)
 .text "25 YEARS LATER!      "
 scrollSpeed($02)
-.text "  "
+.text " "
 scrollColor($10)
-.text "         "
-.text " BACK TO THE FUTURE BABY!      "
-.text "                "
+//use spaces to get the final timing right!
+.text "                   GET BACK TO THE FUTURE BABY!                 "
 scrollSpeed($01)
+//then just scroll off - the effect should be terminated before finishing this text
 .text "                                                       "
 .byte $00
 /*
