@@ -34,6 +34,7 @@ rsrc/sm_effect_8.prg: rsrc/sm_effect_8.asm
 
 disk.d64:	script invite.prg rsrc/shadowscroller.prg rsrc/sm_effect_1.prg rsrc/sm_effect_2.prg rsrc/sm_effect_3.prg rsrc/sm_effect_4.prg rsrc/sm_effect_5.prg rsrc/sm_effect_6.prg rsrc/sm_effect_8.prg rsrc/spritelogo.prg
 		${SPIN} -vv -o $@ -a dirart.txt -d 0 -t "SIGGRAPH 2019" -e 1000 $<
+		c1541 -attach $@ -write rsrc/readme.prg "invitro readme!"
 
 clean:
 		rm *.sym *.prg *.d64

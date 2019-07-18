@@ -154,6 +154,7 @@ irqFinal:
     :startInterrupt()
     lda endSpriteEnable: #$00
     sta REG_SPRITE_ENABLE
+
     //setup bottom border
     lda #%00111011 //$1b
     sta $d011
@@ -171,9 +172,11 @@ _injectMusicSpeed($02)
     bne !-
     lda #%00110011 //$13
     sta $d011
+
 _injectMusicSpeed($03)
     jsr $8003
 _injectMusicSpeed($04)
+
     :mov #$ff: $d019
     :endInterrupt()
 
@@ -190,6 +193,20 @@ irq1:
     lda $d016
     ora #%00010000
     sta $d016
+
+/*
+    See this forum post by Hermit. Thanks to Oswald for referring me to this:
+    https://csdb.dk/forums/?roomid=11&topicid=65658
+    
+    Commented out as I am out of time to fix this 
+
+    _stableLocalRaster($31)
+.for(var i=0;i<27;i++){
+    nop    
+}
+    lda #$01
+    sta $d020
+*/
 
 _injectMusicMain($01)
 
@@ -234,6 +251,11 @@ irq3:
     //pop bottom border
     lda #%00110011 //$13
     sta $d011
+
+
+/*
+todo: insert 'black' in $d020 (see above)
+*/
 
     //handle multispeed scroller
     ldy zp_spriteScrollCurrentSpeed
@@ -321,12 +343,44 @@ funcInitData:
 !loop:
     cmp $d012
     bne !loop-
-    rts
 
+    lda #$08      //the walue for cia timer fetch & for y-delay loop
+    sta $dc04     //CIA Timer will count from 8,8 down to 7,6,5,4,3,2,1
+    lda #$00
+    sta $dc05     //no need Hi-byte for timer at all (or it will mess up)
+    lda #$01
+    sta $dc0e     //forced restart of the timer to value 8 (set in dc04)
+    rts
 
     
 //SPRITE SCROLLER
 funcRenderSpriteScroller:
+/*
+DEBUG CODE for getting raster time right
+
+    ldx zp_spriteScrollOffsetPtr
+    inx
+    inx
+    stx $d020
+
+    inc placeholder
+    beq !+
+    rts
+!:
+    ldx zp_spriteScrollOffsetPtr
+    inx
+    cpx #spriteShiftOffsets
+    bne !+
+    brk //end of debugging
+!:
+    stx zp_spriteScrollOffsetPtr
+    rts            
+placeholder:
+    .byte $00
+
+end BEDUG code
+*/
+
     lda zp_spriteScrollDelayTimer
     beq !skip+
     inc zp_spriteScrollDelayTimer
@@ -540,5 +594,27 @@ These macros work with the scroller
     }
     .pc = startAdr "sprite font"
     .fill spriteData.size(), spriteData.get(i)
+}
+
+.macro _waitForRasterLine(ras){
+    ldx #ras    //;a good value that's not badline, in border and 1=white
+!:
+    cpx $d012   //;scan rasterline
+    bne !-      //;wait until rasterline will be ras
+}
+
+.macro _stableLocalRaster(ras){
+    lda #ras
+!:
+    cmp $d012   //;scan rasterline
+    bne !-      //;wait until rasterline will be $31
+    lda $dc04   //;check timer A, here it jitters between 7...1
+    eor #7      //;A=7-A so jitter will be 0...6 in A
+    sta corr+1  //;self-writing code, the bpl jump-address = A
+corr: 
+    bpl *+2     //;the jump to timer (A) dependent byte
+    cmp #$c9    //;if A=0, cmp#$c9; if A=1, cmp #$c9 again 2 cycles later
+    cmp #$c9    //;if A=2, cmp#$c9, if A=3, CMP #$EA 2 cycles later
+    bit $ea24   //;if A=4,bit$ea24; if A=5, bit $ea, if A=6, only NOP
 }
 
