@@ -8,7 +8,9 @@ https://sa2019.siggraph.org
 This is the Commodore 64 invitro for the event.
 
 **Huge thank you to FLIPSIDE for this great soundtrack**
+
 **Special thank you to GLOOM for his help**
+
 **Greets to the rest of the Defame and Onslaught crew**
 
 ---
