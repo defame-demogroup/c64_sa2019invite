@@ -44,4 +44,4 @@ Apologies for the messy code, this was hacked together in a hurry and so there i
 * I used the same luma ramps for the shadow scroller effect at the end
 * This is my first proper 'multi loader' demo I have really ever done - all my old demos had used the 'Street Gang' IRQ loader and once the drive code was loaded I simply loaded the next file and jumped to it - this demo is actually _timed_ and uses shared memory resources. Spindle is _the shizzle_...
 * Shadow scroller is simple, yet hard to wrap your head around. Step 1: copy color values from bitmap (screen mem and color ram) to 'loads' in the scroller speed code (thats why there are all those 'offsets' and offset comments in the code) Step 2: the speedcode uses those values to lookup a luma Step 3: when you 'scroll' you actually scroll the high byte offset of the luma table lookups across the speedcode! It is a concept that came to me and once I got it - its a great way to speed up any big block-move a LOT. Especially this kind of indirect lookup-based kind.
-* Shadow scroller concept 
+
