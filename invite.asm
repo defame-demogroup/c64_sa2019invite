@@ -69,13 +69,13 @@ start:
 .pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesInit()
     //one for each image
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
-    jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
+    // jsr stateMachineWork
     jsr stateMachineWork
 
     //copy last colormap to $0400

@@ -174,6 +174,51 @@ func_scroll_scroller:
 	sta ACTIVE_COLOR
 	lda #$20
 !:
+
+//Switchn to compare with $82 - $88 in scrolltext to toggle font and inject space
+	cmp #$82
+	bne !+
+	lda #$00
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$83
+	bne !+
+	lda #$01
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$84
+	bne !+
+	lda #$02
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$85
+	bne !+
+	lda #$03
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$86
+	bne !+
+	lda #$04
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$87
+	bne !+
+	lda #$05
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	cmp #$88
+	bne !+
+	lda #$06
+	sta ACTIVE_FONT
+	lda #$20
+!:
+	
 	clc
 	asl 
 	rol OffsetHi
@@ -184,7 +229,8 @@ func_scroll_scroller:
 	sta scrollFontLo
 	clc
 	lda OffsetHi: #$00
-	adc #>FONT
+	ldx ACTIVE_FONT
+	adc FONT_HI,x
 	sta scrollFontHi
 	ldy #$00
 !loop:
@@ -206,57 +252,91 @@ LUMA_HIGH:
 .byte >COLOR_HIGH, >COLOR_MID
 
 SCROLLTEXT:
-.text " greets fly out to   ...   "
+.text "greets"
+.byte $83
+.text "fly"
+.byte $84 
+.text "out"
+.byte $85
+.text "to  ... "
+.byte $82
+
+.byte $86
 .byte $81
-.text "chrome   "
+.text "chrome "
+.byte $87
 .byte $80
-.text "disaster area   "
+.text "disaster area "
+.byte $88
 .byte $81
-.text "digital access   "
+.text "digital access "
+.byte $82
 .byte $80
-.text "cygnus oz   "
+.text "cygnus oz "
+.byte $83
 .byte $81
-.text "duck and chicken   "
+.text "duck and chicken "
+.byte $84
 .byte $80
-.text "funkentstort   "
+.text "funkentstort "
+.byte $85
 .byte $81
-.text "ikon visual   "
+.text "ikon visual "
+.byte $86
 .byte $80
-.text "jimage   "
+.text "jimage "
+.byte $87
 .byte $81
-.text "the force   "
+.text "the force "
+.byte $88
 .byte $80
-.text "desire   "
+.text "desire "
+.byte $82
 .byte $81
-.text "0f.digital   "
+.text "0f.digital "
+.byte $83
 .byte $80
-.text "niknak   "
+.text "niknak "
+.byte $84
 .byte $81
-.text "hedonist   "
+.text "hedonist "
+.byte $85
 .byte $80
-.text "enduro   "
+.text "enduro "
+.byte $86
 .byte $81
-.text "evylz   "
+.text "evylz "
+.byte $87
 .byte $80
-.text "impbox   "
+.text "impbox "
+.byte $88
 .byte $81
-.text "glitter critter   "
+.text "glitter critter "
+.byte $82
 .byte $80
-.text "sexdata   "
+.text "sexdata "
+.byte $83
 .byte $81
-.text "ttt   "
+.text "ttt "
+.byte $84
 .byte $80
-.text "reset   "
+.text "reset "
+.byte $85
 .byte $81
-.text "uncle k   "
+.text "uncle k "
+.byte $86
 .byte $80
-.text "jesder   "
+.text "jesder "
+.byte $87
 .byte $81
-.text "croy   "
+.text "croy "
+.byte $88
 .byte $80
-.text "aday   "
+.text "aday "
+.byte $82
 .byte $81
-.text "epicentre   "
+.text "epicentre "
+.byte $82
 .byte $80
 .text " ...and"
 .byte $81
@@ -266,143 +346,281 @@ SCROLLTEXT:
 .byte $81
 .text "fan"
 .byte $80
-.text "club....    "
+.text "club....  "
+.byte $83
 .byte $81
-.text "abyss connection   "
+.text "abyss connection "
+.byte $84
 .byte $80
-.text "amnesty   "
+.text "amnesty "
+.byte $85
 .byte $81
-.text "artstate   "
+.text "artstate "
+.byte $86
 .byte $80
-.text "arise   "
+.text "arise "
+.byte $87
 .byte $81
-.text "arsenic   "
+.text "arsenic "
+.byte $88
 .byte $80
-.text "atlantis   "
+.text "atlantis "
+.byte $82
 .byte $81
-.text "artline designs   "
+.text "artline designs "
+.byte $83
 .byte $80
-.text "bonzai   "
+.text "bonzai "
+.byte $84
 .byte $81
-.text "booze   "
+.text "booze "
+.byte $85
 .byte $80
-.text "camelot   "
+.text "camelot "
+.byte $86
 .byte $81
-.text "censor   "
+.text "censor "
+.byte $87
 .byte $80
-.text "chorus   "
+.text "chorus "
+.byte $88
 .byte $81
-.text "cosine   "
+.text "cosine "
+.byte $82
 .byte $80
-.text "crest   "
+.text "crest "
+.byte $83
 .byte $81
-.text "dekadence   "
+.text "dekadence "
+.byte $84
 .byte $80
-.text "digital excess   "
+.text "digital excess "
+.byte $85
 .byte $81
-.text "delysid   "
+.text "delysid "
+.byte $82
+
 .byte $80
-.text "elysium   "
+.text "elysium "
+.byte $82
+
 .byte $81
-.text "excess   "
+.text "excess "
+.byte $82
+
 .byte $80
-.text "extend   "
+.text "extend "
+.byte $82
+
 .byte $81
-.text "exon   "
+.text "exon "
+.byte $82
+
 .byte $80
-.text "fairlight   "
+.text "fairlight "
+.byte $82
+
 .byte $81
-.text "focus   "
+.text "focus "
+.byte $82
+
 .byte $80
-.text "fossil   "
+.text "fossil "
+.byte $82
+
 .byte $81
-.text "genesis-project   "
+.text "genesis-project "
+.byte $82
+
 .byte $80
-.text "hitmen   "
+.text "hitmen "
+.byte $82
+
 .byte $81
-.text "hack n' trade   "
+.text "hack n' trade "
+.byte $82
+
 .byte $80
-.text "hoaxers   "
+.text "hoaxers "
+.byte $82
+
 .byte $81
-.text "hokuto force   "
+.text "hokuto force "
+.byte $82
+
 .byte $80
-.text "laxity   "
+.text "laxity "
+.byte $82
+
 .byte $81
-.text "lepsi developments   "
+.text "lepsi developments "
+.byte $82
+
 .byte $80
-.text "level 64   "
+.text "level 64 "
+.byte $82
+
 .byte $81
-.text "maniacs of noise   "
+.text "maniacs of noise "
+.byte $82
+
 .byte $80
-.text "multistyle labs   "
+.text "multistyle labs "
+.byte $82
+
 .byte $81
-.text "mayday   "
+.text "mayday "
+.byte $82
+
 .byte $80
-.text "noice   "
+.text "noice "
+.byte $82
+
 .byte $81
-.text "nah kolor   "
+.text "nah kolor "
+.byte $82
+
 .byte $80
-.text "nostalgia   "
+.text "nostalgia "
+.byte $82
+
 .byte $81
-.text "offence   "
+.text "offence "
+.byte $82
+
 .byte $80
-.text "origo dreamline   "
+.text "origo dreamline "
+.byte $82
+
 .byte $81
-.text "oxyron   "
+.text "oxyron "
+.byte $82
+
 .byte $80
-.text "padua   "
+.text "padua "
+.byte $82
+
 .byte $81
-.text "panda design   "
+.text "panda design "
+.byte $82
+
 .byte $80
-.text "pegboard nerds   "
+.text "pegboard nerds "
+.byte $82
+
 .byte $81
-.text "plush   "
+.text "plush "
+.byte $82
+
 .byte $80
-.text "prosonix   "
+.text "prosonix "
+.byte $82
+
 .byte $81
-.text "resource   "
+.text "resource "
+.byte $82
+
 .byte $80
-.text "role   "
+.text "role "
+.byte $82
+
 .byte $81
-.text "samar   "
+.text "samar "
+.byte $82
+
 .byte $80
-.text "shape   "
+.text "shape "
+.byte $82
+
 .byte $81
-.text "success + trc   "
+.text "success + trc "
+.byte $82
+
 .byte $80
-.text "svenonacid   "
+.text "svenonacid "
+.byte $82
+
 .byte $81
-.text "the dreams   "
+.text "the dreams "
+.byte $82
+
 .byte $80
-.text "the solution   "
+.text "the solution "
+.byte $82
+
 .byte $81
-.text "triad   "
+.text "triad "
+.byte $82
+
 .byte $80
-.text "trsi   "
+.text "trsi "
+.byte $82
+
 .byte $81
-.text "vibrants   "
+.text "vibrants "
+.byte $82
+
 .byte $80
-.text "vision   "
+.text "vision "
+.byte $82
+
 .byte $81
-.text "viruz   "
+.text "viruz "
+.byte $82
+
 .byte $80
-.text "wrath   "
+.text "wrath "
+.byte $82
+
 .byte $81
-.text "x-ample ...      "
+.text "x-ample ...    "
+.byte $82
+
 .byte $80
-.text "see you at the siggraph event...     "
+.text "see you at the siggraph event...   "
+.byte $82
+
 .byte $81
-.text "17-20 november 2019 -  the bcec - brisbane - australia   "
+.text "17-20 november 2019 -  the bcec - brisbane - australia "
+.byte $82
+
 .byte $80
-.text "...   "
+.text "... "
+.byte $82
+
 .byte $80
-.text "   "
-.text "   "
-.text "   "
-.text "   "
+.text " "
+.byte $82
+
+.text " "
+.byte $82
+
+.text " "
+.byte $82
+
+.text " "
+.byte $82
+
 .byte $00
 
+ACTIVE_FONT:
+	.byte $00
+
+FONT_HI:
+	.byte >FONT1, >FONT2, >FONT3, >FONT4, >FONT5, >FONT6, >FONT7
+
+.label FONT1 = $c000
+.label FONT2 = $c200
+.label FONT3 = $c400
+.label FONT4 = $c600
+.label FONT5 = $c800
+.label FONT6 = $ca00
+.label FONT7 = $cc00
+
+
+/*
 .align $100
 .pc=* "FONT DATA"
 FONT:
 .import c64 "font-47.prg"
+*/

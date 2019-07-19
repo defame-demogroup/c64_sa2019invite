@@ -11,6 +11,9 @@ rsrc/spritelogo.prg: rsrc/spritelogo.asm
 rsrc/shadowscroller.prg: rsrc/shadowscroller.asm	 
 		kick $<
 
+rsrc/shadowscroller-fonts.prg: rsrc/shadowscroller-fonts.asm
+		kick $<
+
 rsrc/sm_effect_1.prg: rsrc/sm_effect_1.asm 
 		kick $<
 
@@ -32,7 +35,7 @@ rsrc/sm_effect_6.prg: rsrc/sm_effect_6.asm
 rsrc/sm_effect_8.prg: rsrc/sm_effect_8.asm 
 		kick $<
 
-disk.d64:	script invite.prg rsrc/shadowscroller.prg rsrc/sm_effect_1.prg rsrc/sm_effect_2.prg rsrc/sm_effect_3.prg rsrc/sm_effect_4.prg rsrc/sm_effect_5.prg rsrc/sm_effect_6.prg rsrc/sm_effect_8.prg rsrc/spritelogo.prg
+disk.d64:	script invite.prg rsrc/shadowscroller.prg rsrc/sm_effect_1.prg rsrc/sm_effect_2.prg rsrc/sm_effect_3.prg rsrc/sm_effect_4.prg rsrc/sm_effect_5.prg rsrc/sm_effect_6.prg rsrc/sm_effect_8.prg rsrc/spritelogo.prg rsrc/shadowscroller-fonts.prg
 		${SPIN} -vv -o $@ -a dirart.txt -d 0 -t "SIGGRAPH 2019" -e 1000 $<
 		c1541 -attach $@ -write rsrc/readme.prg "invitro readme!"
 

@@ -23,11 +23,11 @@
 
 .pc = $4800 "siggraph url sprites"
 _loadSpritesFromPicture("siggraph_url_sprites.png", $000000, $ffffff)
+.pc = * "end sprites"
 
 //ripped from the invite.asm
 .const spriteFontAddress = $4800
 .const spriteFontPointerBase = (spriteFontAddress - $4000)/$40
-
 .const x_min = $35
 
 .pc = $4a00 "init logo animation entry point"
@@ -124,6 +124,22 @@ func_moveto:
     sta REG_SPRITE_X_7
     rts
 
+.pc = * "Sprite Non-IRQ entry point"
+    
+    rts
+
+func_plot_black:
+    
+
+func_plot_image:
+
+
+
+BITMASKS:
+    .byte %10000000, %01000000, %00100000, %00010000, %00001000, %00000100, %00000010, %00000001
+
+
+.pc = * "Datasets"
 .align $100
 SPRITE_Y_PATH:
     .fill 256, round(13 + 13*cos(toRadians(i*360/256)))
@@ -165,6 +181,7 @@ SPRITE_X_MSB:
     .byte msb
 }
 
+.align $100
 SPRITE_COLORS:
     .byte $0b,$0b,$0b,$0b,$0c,$0c,$0c,$0c
     .byte $0f,$0f,$0f,$0f,$01,$01,$01,$01
@@ -201,4 +218,8 @@ SPRITE_COLORS:
     .byte $0b,$0b,$0b,$0b,$05,$05,$05,$05
     .byte $0d,$0d,$0d,$0d,$05,$05,$05,$05
     .byte $0b,$0b,$0b,$0b,$09,$09,$09,$09
+
+.align $100
+SPRITE_ORIGINAL:
+_loadSpritesFromPicture("siggraph_url_sprites.png", $000000, $ffffff)
 
