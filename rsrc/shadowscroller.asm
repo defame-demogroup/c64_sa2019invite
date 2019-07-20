@@ -121,7 +121,9 @@ func_scroll_scroller:
 		lda shadowBufferB + i
 		cmp #$01
 		bne !+
-		lda #>COLOR_LOW
+//		lda #>COLOR_LOW
+		ldx ACTIVE_COLOR
+		lda LUMA_SHADOW,x
 		jmp !transdraw+
 !:
 		lda # >COLOR_REAL
@@ -250,6 +252,9 @@ ACTIVE_COLOR:
 
 LUMA_HIGH:
 .byte >COLOR_HIGH, >COLOR_MID
+
+LUMA_SHADOW:
+.byte >COLOR_MID, >COLOR_LOW
 
 SCROLLTEXT:
 .text "greets"

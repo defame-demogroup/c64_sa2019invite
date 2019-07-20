@@ -69,13 +69,13 @@ start:
 .pc = * "DEBUG MAIN LOOP"
     _insertStateMachinesInit()
     //one for each image
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
-    // jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
+    jsr stateMachineWork
     jsr stateMachineWork
 
     //copy last colormap to $0400
@@ -103,6 +103,7 @@ start:
     lda #$01
     sta CallSpriteLogoFlag
 !:
+    jmp $4c9c //sprite logo dissolver entry point
     jmp !-
 
 stateMachineWork:

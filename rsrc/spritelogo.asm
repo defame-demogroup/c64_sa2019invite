@@ -22,7 +22,8 @@
 
 
 .pc = $4800 "siggraph url sprites"
-_loadSpritesFromPicture("siggraph_url_sprites.png", $000000, $ffffff)
+//_loadSpritesFromPicture("siggraph_url_sprites.png", $000000, $ffffff)
+.fill $200, $00
 .pc = * "end sprites"
 
 //ripped from the invite.asm
@@ -125,22 +126,106 @@ func_moveto:
     rts
 
 .pc = * "Sprite Non-IRQ entry point"
-    
+!:
+    jsr func_dissolve_in
+    lda #$ff
+    jsr func_pause
+    jsr func_dissolve_out
+    lda #$40
+    jsr func_pause
+    inc offsa
+    inc offsa
+    dec offsb
+    dec offsb
+    jmp !-
+
+func_pause:
+    sta delay
+    ldx #$00
+!loop:
+    ldy delay: #$40
+!:
+    nop
+    nop
+    nop
+    nop
+    dey
+    bne !-
+    dex
+    bne !loop-
+    rts
+
+func_short_pause:
+    ldx #$80
+!:
+    dex
+    bne !-
+    rts
+
+func_dissolve_out:
+!:
+    jsr func_short_pause
+    clc
+    lda ptra: #$00
+    adc offsa:#$0b
+    sta ptra
+    jsr func_plot_black
+    lda ctra: #$00
+    inc ctra
+    bne !-
+    rts
+
+func_dissolve_in:
+!:
+    jsr func_short_pause
+    clc
+    lda ptrb: #$00
+    adc offsb:#$09
+    sta ptrb
+    jsr func_plot_original
+    lda ctrb: #$00
+    inc ctrb
+    bne !-
+    rts
+
+func_plot_original:
+	tay
+	and #%00000111
+	tax
+	tya
+	lsr
+	lsr
+	lsr
+	tay
+	.for(var i=0;i<16;i++){
+        lda SPRITE_ORIGINAL + (i*$20),y
+        and OR_BITMASKS,x
+        ora spriteFontAddress + (i*$20),y        
+        sta spriteFontAddress + (i*$20),y
+    }
     rts
 
 func_plot_black:
-    
+	tay
+	and #%00000111
+	tax
+	tya
+	lsr
+	lsr
+	lsr
+	tay
+	.for(var i=0;i<16;i++){
+        lda spriteFontAddress + (i*$20),y
+        and AND_BITMASKS,x
+        sta spriteFontAddress + (i*$20),y
+    }
+    rts    
 
-func_plot_image:
-	
-
-func_plot:
-    
-
-
-
-BITMASKS:
+OR_BITMASKS:
     .byte %10000000, %01000000, %00100000, %00010000, %00001000, %00000100, %00000010, %00000001
+AND_BITMASKS:
+    .byte %01111111, %10111111, %11011111, %11101111, %11110111, %11111011, %11111101, %11111110
+
 
 
 .pc = * "Datasets"
