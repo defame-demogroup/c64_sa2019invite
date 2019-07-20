@@ -398,209 +398,153 @@ SCROLLTEXT:
 .byte $85
 .byte $81
 .text "delysid "
-.byte $82
-
+.byte $86
 .byte $80
 .text "elysium "
-.byte $82
-
+.byte $87
 .byte $81
 .text "excess "
-.byte $82
-
+.byte $88
 .byte $80
 .text "extend "
 .byte $82
-
 .byte $81
 .text "exon "
-.byte $82
-
+.byte $83
 .byte $80
 .text "fairlight "
-.byte $82
-
+.byte $84
 .byte $81
 .text "focus "
-.byte $82
-
+.byte $85
 .byte $80
 .text "fossil "
-.byte $82
-
+.byte $86
 .byte $81
 .text "genesis-project "
-.byte $82
-
+.byte $87
 .byte $80
 .text "hitmen "
-.byte $82
-
+.byte $88
 .byte $81
 .text "hack n' trade "
 .byte $82
-
 .byte $80
 .text "hoaxers "
-.byte $82
-
+.byte $83
 .byte $81
 .text "hokuto force "
-.byte $82
-
+.byte $84
 .byte $80
 .text "laxity "
-.byte $82
-
+.byte $85
 .byte $81
 .text "lepsi developments "
-.byte $82
-
+.byte $86
 .byte $80
 .text "level 64 "
-.byte $82
-
+.byte $87
 .byte $81
 .text "maniacs of noise "
-.byte $82
-
+.byte $88
 .byte $80
 .text "multistyle labs "
 .byte $82
-
 .byte $81
 .text "mayday "
-.byte $82
-
+.byte $83
 .byte $80
 .text "noice "
-.byte $82
-
+.byte $84
 .byte $81
 .text "nah kolor "
-.byte $82
-
+.byte $85
 .byte $80
 .text "nostalgia "
-.byte $82
-
+.byte $86
 .byte $81
 .text "offence "
-.byte $82
-
+.byte $87
 .byte $80
 .text "origo dreamline "
-.byte $82
-
+.byte $88
 .byte $81
 .text "oxyron "
 .byte $82
-
 .byte $80
 .text "padua "
-.byte $82
-
+.byte $83
 .byte $81
 .text "panda design "
-.byte $82
-
+.byte $84
 .byte $80
 .text "pegboard nerds "
-.byte $82
-
+.byte $85
 .byte $81
 .text "plush "
-.byte $82
-
+.byte $86
 .byte $80
 .text "prosonix "
-.byte $82
-
+.byte $87
 .byte $81
 .text "resource "
-.byte $82
-
+.byte $88
 .byte $80
 .text "role "
 .byte $82
-
 .byte $81
 .text "samar "
-.byte $82
-
+.byte $83
 .byte $80
 .text "shape "
-.byte $82
-
+.byte $84
 .byte $81
 .text "success + trc "
-.byte $82
-
+.byte $85
 .byte $80
 .text "svenonacid "
-.byte $82
-
+.byte $86
 .byte $81
 .text "the dreams "
-.byte $82
-
+.byte $87
 .byte $80
 .text "the solution "
-.byte $82
-
+.byte $88
 .byte $81
 .text "triad "
 .byte $82
-
 .byte $80
 .text "trsi "
-.byte $82
-
+.byte $83
 .byte $81
 .text "vibrants "
-.byte $82
-
+.byte $84
 .byte $80
 .text "vision "
-.byte $82
-
+.byte $85
 .byte $81
 .text "viruz "
-.byte $82
-
+.byte $86
 .byte $80
 .text "wrath "
-.byte $82
-
+.byte $87
 .byte $81
 .text "x-ample ...    "
 .byte $82
-
 .byte $80
 .text "see you at the siggraph event...   "
 .byte $82
-
-.byte $81
+.byte $83
 .text "17-20 november 2019 -  the bcec - brisbane - australia "
 .byte $82
-
 .byte $80
 .text "... "
 .byte $82
-
 .byte $80
 .text " "
-.byte $82
-
 .text " "
-.byte $82
-
 .text " "
-.byte $82
-
 .text " "
-.byte $82
-
 .byte $00
 
 ACTIVE_FONT:

@@ -28,7 +28,7 @@ _loadSpritesFromPicture("siggraph_url_sprites.png", $000000, $ffffff)
 //ripped from the invite.asm
 .const spriteFontAddress = $4800
 .const spriteFontPointerBase = (spriteFontAddress - $4000)/$40
-.const x_min = $35
+.const x_min = $0
 
 .pc = $4a00 "init logo animation entry point"
 .for(var i=0;i<8;i++){
@@ -132,6 +132,10 @@ func_plot_black:
     
 
 func_plot_image:
+	
+
+func_plot:
+    
 
 
 
@@ -142,17 +146,17 @@ BITMASKS:
 .pc = * "Datasets"
 .align $100
 SPRITE_Y_PATH:
-    .fill 256, round(13 + 13*cos(toRadians(i*360/256)))
+    .fill 256, round(16 + 16*cos(toRadians(i*360/256)))
 
 .align $100
 SPRITE_X_PATH:
-    .fill 256, round(32 + 32*sin(toRadians(i*360/256)))
+    .fill 256, round(88 + 96*sin(toRadians(i*360/256))*sin(toRadians(i*720/256))*cos(toRadians(i*1440/256)))
 
 .align $100
 SPRITE_X_MSB:
 .for(var i=0;i<256;i++)
 {
-    .var data = round(32 + 32*sin(toRadians(i*360/256)))
+    .var data = round(88 + 96*sin(toRadians(i*360/256)) * sin(toRadians(i*720/256))*cos(toRadians(i*1440/256)))
     .var msb = %00000000
     .if (data + x_min > 255){
         .eval msb = msb | %00000001
