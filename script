@@ -34,7 +34,7 @@ rsrc/img4.prg					8000	2
 rsrc/sm_effect_4.prg			a800	2
 
 #kangaroo - final image for the shadowscroller
-rsrc/img3.prg					8000	2 
+rsrc/img8.prg					8000	2 
 rsrc/sm_effect_8.prg			a800	2
 
 rsrc/shadowscroller.prg     	8000    2
