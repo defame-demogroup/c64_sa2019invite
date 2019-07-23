@@ -341,6 +341,12 @@ SCROLLTEXT:
 .byte $82
 .byte $81
 .text "epicentre "
+.byte $83
+.byte $80
+.text "  oh we nearly forgot"
+.byte $84
+.byte $81
+.text "onslaught :) "
 .byte $82
 .byte $80
 .text " ...and"
