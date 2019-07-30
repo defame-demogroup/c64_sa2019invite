@@ -1,5 +1,7 @@
 # c64_sa2019invite
 
+![Thumbnail](https://github.com/defame-demogroup/c64_sa2019invite/blob/master/original_assets/ezgif-1-fc4a913c87e6.gif?raw=true)
+
 There is finally going to be a *demoscene* event at SIGGRAPH. 
 
 Siggraph Asia 2019
